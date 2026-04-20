@@ -51,7 +51,7 @@ class PengembalianExport implements FromCollection, WithHeadings, WithMapping, W
             $no,
             $row->peminjaman->user->name,
             $row->peminjaman->alat->nama_alat,
-            $row->peminjaman->created_at->format('d/m/Y'),
+            $row->peminjaman->created_at    ->format('d/m/Y'),
             $row->peminjaman->tanggal_pengembalian->format('d/m/Y'),
             $row->tanggal_kembali_realisasi->format('d/m/Y'),
             $row->hari_terlambat . ' hari',

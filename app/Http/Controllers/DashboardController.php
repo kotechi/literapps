@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -14,6 +15,15 @@ class DashboardController extends Controller
         $firstTitle = '';
         $secondTitle = '';
         $thirdTitle = '';
+        $chartLabels = [];
+        $chartPeminjaman = [];
+        $chartPengembalian = [];
+        $chartTotalDenda = [];
+        $adminChartSummary = [
+            'peminjaman' => 0,
+            'pengembalian' => 0,
+            'total_denda' => 0,
+        ];
 
         if(auth()->user()->isAdmin()) {
             $firstSummary = \App\Models\User::count();
@@ -26,6 +36,26 @@ class DashboardController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->take(10)
                 ->get();
+
+            $months = collect(range(5, 0))->map(function ($monthOffset) {
+                return Carbon::now()->subMonths($monthOffset)->startOfMonth();
+            });
+
+            foreach ($months as $month) {
+                $startDate = $month->copy()->startOfMonth();
+                $endDate = $month->copy()->endOfMonth();
+
+                $chartLabels[] = $month->translatedFormat('M Y');
+                $chartPeminjaman[] = \App\Models\Peminjaman::whereBetween('created_at', [$startDate, $endDate])->count();
+                $chartPengembalian[] = \App\Models\Pengembalian::whereBetween('created_at', [$startDate, $endDate])->count();
+                $chartTotalDenda[] = \App\Models\Denda::whereBetween('created_at', [$startDate, $endDate])->count();
+            }
+
+            $adminChartSummary = [
+                'peminjaman' => array_sum($chartPeminjaman),
+                'pengembalian' => array_sum($chartPengembalian),
+                'total_denda' => array_sum($chartTotalDenda),
+            ];
         } elseif(auth()->user()->isPetugas()) {
             $firstSummary = \App\Models\Peminjaman::where('status', 'menunggu')->count();
             $secondSummary = \App\Models\Pengembalian::where('status', 'menunggu')->count();
@@ -55,6 +85,19 @@ class DashboardController extends Controller
                 ->take(10)
                 ->get();
         }
-        return view('dashboard', compact('firstSummary', 'secondSummary', 'thirdSummary', 'firstTitle', 'secondTitle', 'thirdTitle', 'latestActivity'));
+        return view('dashboard', compact(
+            'firstSummary',
+            'secondSummary',
+            'thirdSummary',
+            'firstTitle',
+            'secondTitle',
+            'thirdTitle',
+            'latestActivity',
+            'chartLabels',
+            'chartPeminjaman',
+            'chartPengembalian',
+            'chartTotalDenda',
+            'adminChartSummary',
+        ));
     }
 }

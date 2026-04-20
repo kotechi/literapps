@@ -66,6 +66,37 @@
             </div>
         </div>
 
+        @if(auth()->user()->isAdmin())
+        <!-- Admin Chart Stats -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div class="flex flex-col gap-5">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">Statistik 6 Bulan Terakhir</h2>
+                    <p class="text-sm text-gray-500">Peminjaman, pengembalian, dan total denda</p>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-3">
+                    <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <p class="text-sm font-medium text-blue-700">Total Peminjaman</p>
+                        <p class="mt-1 text-2xl font-bold text-blue-900">{{ number_format($adminChartSummary['peminjaman']) }}</p>
+                    </div>
+                    <div class="rounded-lg border border-green-200 bg-green-50 p-4">
+                        <p class="text-sm font-medium text-green-700">Total Pengembalian</p>
+                        <p class="mt-1 text-2xl font-bold text-green-900">{{ number_format($adminChartSummary['pengembalian']) }}</p>
+                    </div>
+                    <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                        <p class="text-sm font-medium text-amber-700">Total Denda</p>
+                        <p class="mt-1 text-2xl font-bold text-amber-900">{{ number_format($adminChartSummary['total_denda']) }}</p>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                    <canvas id="adminStatsChart" height="110"></canvas>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Main Content Area -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
             <div class="overflow-x-auto">
@@ -113,4 +144,107 @@
             </div>
         </div>
     </div>
+
+    @if(auth()->user()->isAdmin())
+    <script>
+        (() => {
+            const labels = @json($chartLabels);
+            const dataPeminjaman = @json($chartPeminjaman);
+            const dataPengembalian = @json($chartPengembalian);
+            const dataTotalDenda = @json($chartTotalDenda);
+
+            const initAdminStatsChart = () => {
+                const adminStatsCanvas = document.getElementById('adminStatsChart');
+
+                if (!adminStatsCanvas || !window.Chart) {
+                    return false;
+                }
+
+                const existingChart = window.Chart.getChart(adminStatsCanvas);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+
+                new window.Chart(adminStatsCanvas, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Peminjaman',
+                                data: dataPeminjaman,
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                                tension: 0.35,
+                                fill: true,
+                                yAxisID: 'y',
+                            },
+                            {
+                                label: 'Pengembalian',
+                                data: dataPengembalian,
+                                borderColor: '#059669',
+                                backgroundColor: 'rgba(5, 150, 105, 0.15)',
+                                tension: 0.35,
+                                fill: true,
+                                yAxisID: 'y',
+                            },
+                            {
+                                label: 'Total Denda',
+                                data: dataTotalDenda,
+                                borderColor: '#d97706',
+                                backgroundColor: 'rgba(217, 119, 6, 0.15)',
+                                tension: 0.35,
+                                fill: true,
+                                yAxisID: 'y',
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Jumlah Data',
+                                },
+                            },
+                        },
+                    },
+                });
+
+                return true;
+            };
+
+            const initWithRetry = (attempt = 0) => {
+                if (initAdminStatsChart()) {
+                    return;
+                }
+
+                if (attempt < 20) {
+                    setTimeout(() => initWithRetry(attempt + 1), 100);
+                }
+            };
+
+            if (!window.__adminStatsChartListenersBound) {
+                window.__adminStatsChartListenersBound = true;
+
+                document.addEventListener('DOMContentLoaded', () => initWithRetry());
+                document.addEventListener('livewire:navigated', () => initWithRetry());
+            }
+
+            initWithRetry();
+        })();
+    </script>
+    @endif
 </x-layouts::app>
