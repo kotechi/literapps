@@ -13,7 +13,7 @@
 
         <!-- Form Card -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-            <form method="POST" action="{{ route('pengembalian.update', $pengembalian) }}">
+            <form method="POST" action="{{ route('pengembalian.update', $pengembalian) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -87,6 +87,44 @@
                         @enderror
                     </div>
 
+                    <!-- Bukti Pengembalian Section -->
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Bukti Pengembalian</h3>
+                        
+                        @if($pengembalian->buktiPengembalian->count() > 0)
+                        <div class="mb-6">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">File yang sudah diupload:</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                @foreach($pengembalian->buktiPengembalian as $bukti)
+                                <div class="relative rounded-lg border border-gray-200 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ basename($bukti->path_file) }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $bukti->tipe_media }}</p>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <div class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 text-center hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all">
+                            <div class="flex flex-col items-center gap-3">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Tambah bukti baru atau drag & drop</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG, JPG, PDF hingga 10MB</p>
+                                </div>
+                                <input type="file" name="bukti_pengembalian[]" id="bukti_pengembalian" multiple
+                                       class="hidden"
+                                       accept="image/png,image/jpeg,application/pdf">
+                                <label for="bukti_pengembalian" class="cursor-pointer text-blue-600 hover:text-blue-700 font-medium text-sm">
+                                    Klik untuk pilih file
+                                </label>
+                            </div>
+                        </div>
+                        <div id="bukti_preview" class="mt-4 grid grid-cols-2 gap-3"></div>
+                    </div>
+
                     <div class="flex justify-end space-x-3">
                         <a href="{{ route('pengembalian.index') }}" class="inline-flex items-center gap-2 bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,4 +143,28 @@
             </form>
         </div>
     </div>
+
+    <script>
+        // File preview untuk bukti pengembalian
+        const buktiInput = document.getElementById('bukti_pengembalian');
+        const buktiPreview = document.getElementById('bukti_preview');
+
+        if (buktiInput) {
+            buktiInput.addEventListener('change', function(e) {
+                buktiPreview.innerHTML = '';
+                Array.from(this.files).forEach(file => {
+                    const div = document.createElement('div');
+                    div.className = 'relative rounded-lg border border-green-200 bg-green-50 dark:bg-green-900/20 p-3';
+                    div.innerHTML = `
+                        <svg class="w-8 h-8 text-green-600 dark:text-green-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">${file.name}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">${(file.size / 1024).toFixed(2)} KB</p>
+                    `;
+                    buktiPreview.appendChild(div);
+                });
+            });
+        }
+    </script>
 </x-layouts::app>

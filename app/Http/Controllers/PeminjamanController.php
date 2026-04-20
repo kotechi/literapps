@@ -62,6 +62,7 @@ class PeminjamanController extends Controller
             'id_user' => 'nullable|exists:users,id',
             'id_alat' => 'required|exists:alat,id',
             'tanggal_pengembalian' => 'required|date|after:today',
+            'deskripsi' => 'nullable|string|max:1000',
         ]);
 
         if (!isset($validated['id_user'])) {
@@ -89,9 +90,15 @@ class PeminjamanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Peminjaman $peminjaman)
     {
-        //
+        $peminjaman->load(['user', 'alat.kategori', 'pengembalian.user', 'pengembalian.buktiPengembalian', 'pengembalian.denda']);
+
+        if (auth()->user()->isPeminjam() && $peminjaman->id_user !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('peminjaman.show', compact('peminjaman'));
     }
 
     /**
@@ -114,6 +121,7 @@ class PeminjamanController extends Controller
             'id_user' => 'nullable|exists:users,id',
             'id_alat' => 'required|exists:alat,id',
             'tanggal_pengembalian' => 'required|date|after:today',
+            'deskripsi' => 'nullable|string|max:1000',
             'status' => 'required|in:menunggu,disetujui,ditolak,dikembalikan',
         ]);
 

@@ -77,6 +77,16 @@
                         @enderror
                     </div>
 
+                    <div>
+                        <label for="deskripsi" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Deskripsi (Opsional)</label>
+                        <textarea name="deskripsi" id="deskripsi" rows="4"
+                                  class="block w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                  placeholder="Catatan atau keterangan tambahan tentang peminjaman ini...">{{ old('deskripsi', $peminjaman->deskripsi) }}</textarea>
+                        @error('deskripsi')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div class="flex justify-end space-x-3">
                         <a href="{{ route('peminjaman.index') }}" class="inline-flex items-center gap-2 bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

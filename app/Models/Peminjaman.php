@@ -15,6 +15,7 @@ class Peminjaman extends Model
         'id_user',
         'id_alat',
         'tanggal_pengembalian',
+        'deskripsi',
         'status',
     ];
 

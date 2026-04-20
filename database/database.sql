@@ -30,9 +30,36 @@ CREATE TABLE IF NOT EXISTS `alat` (
   PRIMARY KEY (`id`),
   KEY `alat_id_kategori_foreign` (`id_kategori`),
   CONSTRAINT `alat_id_kategori_foreign` FOREIGN KEY (`id_kategori`) REFERENCES `kategori` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.alat: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.alat: ~2 rows (approximately)
+INSERT INTO `alat` (`id`, `id_kategori`, `nama_alat`, `status`, `created_at`, `updated_at`) VALUES
+	(1, 1, 'Kipas Angin', 'tersedia', '2026-02-11 05:55:55', '2026-04-19 20:37:12'),
+	(2, 1, 'AC', 'tidak_tersedia', '2026-02-11 05:56:21', '2026-04-19 21:01:49'),
+	(4, 1, 'PC 01', 'tersedia', '2026-04-19 20:19:49', '2026-04-19 20:19:49'),
+	(5, 1, 'Laptop 001', 'tidak_tersedia', '2026-04-19 20:20:12', '2026-04-19 20:55:14'),
+	(6, 1, 'PC 002', 'tersedia', '2026-04-19 20:22:17', '2026-04-19 20:22:17'),
+	(7, 1, 'Laptop 002', 'tersedia', '2026-04-19 20:22:40', '2026-04-19 20:22:40'),
+	(8, 1, 'PC 003', 'tersedia', '2026-04-19 20:44:42', '2026-04-19 20:44:42'),
+	(9, 1, 'Laptop 003', 'tersedia', '2026-04-19 20:49:39', '2026-04-19 20:49:39');
+
+-- Dumping structure for table peminjaman-alat.bukti_pengembalian
+CREATE TABLE IF NOT EXISTS `bukti_pengembalian` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `id_pengembalian` bigint unsigned NOT NULL,
+  `tipe_media` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'foto',
+  `path_file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `keterangan` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `bukti_pengembalian_id_pengembalian_foreign` (`id_pengembalian`),
+  CONSTRAINT `bukti_pengembalian_id_pengembalian_foreign` FOREIGN KEY (`id_pengembalian`) REFERENCES `pengembalian` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table peminjaman-alat.bukti_pengembalian: ~0 rows (approximately)
+INSERT INTO `bukti_pengembalian` (`id`, `id_pengembalian`, `tipe_media`, `path_file`, `keterangan`, `created_at`, `updated_at`) VALUES
+	(2, 9, 'foto', 'bukti-pengembalian/TsSO7cZ4h39n1LVjjCLZgSE70FV8c8nSZwwrU3IC.jpg', NULL, '2026-04-19 21:01:27', '2026-04-19 21:01:27');
 
 -- Dumping structure for table peminjaman-alat.cache
 CREATE TABLE IF NOT EXISTS `cache` (
@@ -43,7 +70,18 @@ CREATE TABLE IF NOT EXISTS `cache` (
   KEY `cache_expiration_index` (`expiration`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.cache: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.cache: ~6 rows (approximately)
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+	('laravel-cache-1ff65699b41ea5eb1e6b37a78af90b69', 'i:1;', 1776651620),
+	('laravel-cache-1ff65699b41ea5eb1e6b37a78af90b69:timer', 'i:1776651620;', 1776651620),
+	('laravel-cache-73be6290c2b2f51a8fa806cde0e8dbc2', 'i:1;', 1776651957),
+	('laravel-cache-73be6290c2b2f51a8fa806cde0e8dbc2:timer', 'i:1776651957;', 1776651957),
+	('laravel-cache-aditiya@gmail.com|127.0.0.1', 'i:1;', 1776651620),
+	('laravel-cache-aditiya@gmail.com|127.0.0.1:timer', 'i:1776651620;', 1776651620),
+	('laravel-cache-c525a5357e97fef8d3db25841c86da1a', 'i:1;', 1776651927),
+	('laravel-cache-c525a5357e97fef8d3db25841c86da1a:timer', 'i:1776651927;', 1776651927),
+	('laravel-cache-c94a54d2a2c33e5b08a8fb6c8cb8c96e', 'i:1;', 1776655519),
+	('laravel-cache-c94a54d2a2c33e5b08a8fb6c8cb8c96e:timer', 'i:1776655519;', 1776655519);
 
 -- Dumping structure for table peminjaman-alat.cache_locks
 CREATE TABLE IF NOT EXISTS `cache_locks` (
@@ -71,9 +109,15 @@ CREATE TABLE IF NOT EXISTS `denda` (
   KEY `denda_id_user_foreign` (`id_user`),
   CONSTRAINT `denda_id_pengembalian_foreign` FOREIGN KEY (`id_pengembalian`) REFERENCES `pengembalian` (`id`) ON DELETE CASCADE,
   CONSTRAINT `denda_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.denda: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.denda: ~5 rows (approximately)
+INSERT INTO `denda` (`id`, `id_pengembalian`, `id_user`, `nama_kategori`, `status`, `total_denda`, `created_at`, `updated_at`) VALUES
+	(1, 1, 3, 'Elektronik', 'selesai', 35000, '2026-02-11 06:11:09', '2026-02-11 09:56:37'),
+	(2, 2, 3, 'Elektronik', 'selesai', 10000, '2026-02-11 09:55:05', '2026-02-11 09:56:31'),
+	(3, 3, 3, 'Elektronik', 'selesai', 20000, '2026-02-11 10:04:14', '2026-02-11 10:05:14'),
+	(4, 5, 3, 'Elektronik', 'menunggu', 25000, '2026-04-19 19:38:45', '2026-04-19 19:38:45'),
+	(5, 9, 3, 'Elektronik', 'selesai', 20000, '2026-04-19 21:01:49', '2026-04-19 21:03:16');
 
 -- Dumping structure for table peminjaman-alat.failed_jobs
 CREATE TABLE IF NOT EXISTS `failed_jobs` (
@@ -129,9 +173,12 @@ CREATE TABLE IF NOT EXISTS `kategori` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.kategori: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.kategori: ~2 rows (approximately)
+INSERT INTO `kategori` (`id`, `nama_kategori`, `created_at`, `updated_at`) VALUES
+	(1, 'Elektronik', '2026-02-11 05:55:00', '2026-02-11 05:55:00'),
+	(2, 'Peralatan Sekolah', '2026-02-11 05:55:31', '2026-02-11 05:55:31');
 
 -- Dumping structure for table peminjaman-alat.log_aktivitas
 CREATE TABLE IF NOT EXISTS `log_aktivitas` (
@@ -145,9 +192,149 @@ CREATE TABLE IF NOT EXISTS `log_aktivitas` (
   PRIMARY KEY (`id`),
   KEY `log_aktivitas_id_user_foreign` (`id_user`),
   CONSTRAINT `log_aktivitas_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=140 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.log_aktivitas: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.log_aktivitas: ~61 rows (approximately)
+INSERT INTO `log_aktivitas` (`id`, `deskripsi`, `id_user`, `jenis_aktivitas`, `tanggal_aktivitas`, `created_at`, `updated_at`) VALUES
+	(1, 'Login ke sistem', 1, 'login', '2026-02-11', '2026-02-11 04:24:16', '2026-02-11 04:24:16'),
+	(2, 'Logout dari sistem', 1, 'logout', '2026-02-11', '2026-02-11 05:44:19', '2026-02-11 05:44:19'),
+	(3, 'Login ke sistem', 1, 'login', '2026-02-11', '2026-02-11 05:53:49', '2026-02-11 05:53:49'),
+	(4, 'Menambahkan kategori baru: Elektronik', 1, 'kategori', '2026-02-11', '2026-02-11 05:55:00', '2026-02-11 05:55:00'),
+	(5, 'Menambahkan kategori baru: Peralatan Sekolah', 1, 'kategori', '2026-02-11', '2026-02-11 05:55:31', '2026-02-11 05:55:31'),
+	(6, 'Menambahkan alat baru: Kipas Angin', 1, 'alat', '2026-02-11', '2026-02-11 05:55:55', '2026-02-11 05:55:55'),
+	(7, 'Menambahkan alat baru: AC', 1, 'alat', '2026-02-11', '2026-02-11 05:56:21', '2026-02-11 05:56:21'),
+	(8, 'Mengajukan peminjaman alat: AC', 1, 'peminjaman', '2026-02-11', '2026-02-11 06:06:20', '2026-02-11 06:06:20'),
+	(9, 'Mengubah data alat: AC', 1, 'alat', '2026-02-11', '2026-02-11 06:06:20', '2026-02-11 06:06:20'),
+	(10, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 1, 'peminjaman', '2026-02-11', '2026-02-11 06:07:44', '2026-02-11 06:07:44'),
+	(11, 'Mengembalikan alat dari peminjaman ID: 1', 1, 'pengembalian', '2026-02-11', '2026-02-11 06:08:10', '2026-02-11 06:08:10'),
+	(12, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 1, 'peminjaman', '2026-02-11', '2026-02-11 06:08:10', '2026-02-11 06:08:10'),
+	(13, 'Mengubah data alat: AC', 1, 'alat', '2026-02-11', '2026-02-11 06:08:10', '2026-02-11 06:08:10'),
+	(14, 'Login ke sistem', 2, 'login', '2026-02-11', '2026-02-11 06:10:12', '2026-02-11 06:10:12'),
+	(15, 'Mengubah data pengembalian ID: 1', 2, 'pengembalian', '2026-02-11', '2026-02-11 06:11:09', '2026-02-11 06:11:09'),
+	(16, 'Mengubah data alat: AC', 2, 'alat', '2026-02-11', '2026-02-11 06:11:09', '2026-02-11 06:11:09'),
+	(17, 'Menambahkan denda sebesar Rp 35.000 untuk user ID: 3', 2, 'denda', '2026-02-11', '2026-02-11 06:11:09', '2026-02-11 06:11:09'),
+	(18, 'Login ke sistem', 1, 'login', '2026-02-11', '2026-02-11 09:04:33', '2026-02-11 09:04:33'),
+	(19, 'Logout dari sistem', 1, 'logout', '2026-02-11', '2026-02-11 09:07:23', '2026-02-11 09:07:23'),
+	(20, 'Login ke sistem', 2, 'login', '2026-02-11', '2026-02-11 09:07:35', '2026-02-11 09:07:35'),
+	(21, 'Logout dari sistem', 2, 'logout', '2026-02-11', '2026-02-11 09:24:08', '2026-02-11 09:24:08'),
+	(22, 'Login ke sistem', 1, 'login', '2026-02-11', '2026-02-11 09:48:43', '2026-02-11 09:48:43'),
+	(23, 'Menambahkan kategori baru: Peralatan Rumah', 1, 'kategori', '2026-02-11', '2026-02-11 09:50:47', '2026-02-11 09:50:47'),
+	(24, 'Mengubah kategori: Perabotan', 1, 'kategori', '2026-02-11', '2026-02-11 09:51:04', '2026-02-11 09:51:04'),
+	(25, 'Menghapus kategori: Perabotan', 1, 'kategori', '2026-02-11', '2026-02-11 09:51:10', '2026-02-11 09:51:10'),
+	(26, 'Menambahkan alat baru: Pel', 1, 'alat', '2026-02-11', '2026-02-11 09:51:37', '2026-02-11 09:51:37'),
+	(27, 'Mengubah data alat: Kipas', 1, 'alat', '2026-02-11', '2026-02-11 09:51:52', '2026-02-11 09:51:52'),
+	(28, 'Menghapus alat: Kipas', 1, 'alat', '2026-02-11', '2026-02-11 09:51:58', '2026-02-11 09:51:58'),
+	(29, 'Mengajukan peminjaman alat: Kipas Angin', 1, 'peminjaman', '2026-02-11', '2026-02-11 09:52:43', '2026-02-11 09:52:43'),
+	(30, 'Mengubah data alat: Kipas Angin', 1, 'alat', '2026-02-11', '2026-02-11 09:52:43', '2026-02-11 09:52:43'),
+	(31, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 1, 'peminjaman', '2026-02-11', '2026-02-11 09:53:14', '2026-02-11 09:53:14'),
+	(32, 'Mengembalikan alat dari peminjaman ID: 2', 1, 'pengembalian', '2026-02-11', '2026-02-11 09:53:58', '2026-02-11 09:53:58'),
+	(33, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 1, 'peminjaman', '2026-02-11', '2026-02-11 09:53:58', '2026-02-11 09:53:58'),
+	(34, 'Mengubah data alat: Kipas Angin', 1, 'alat', '2026-02-11', '2026-02-11 09:53:58', '2026-02-11 09:53:58'),
+	(35, 'Login ke sistem', 2, 'login', '2026-02-11', '2026-02-11 09:54:50', '2026-02-11 09:54:50'),
+	(36, 'Mengubah data pengembalian ID: 2', 2, 'pengembalian', '2026-02-11', '2026-02-11 09:55:05', '2026-02-11 09:55:05'),
+	(37, 'Mengubah data alat: Kipas Angin', 2, 'alat', '2026-02-11', '2026-02-11 09:55:05', '2026-02-11 09:55:05'),
+	(38, 'Menambahkan denda sebesar Rp 10.000 untuk user ID: 3', 2, 'denda', '2026-02-11', '2026-02-11 09:55:05', '2026-02-11 09:55:05'),
+	(39, 'Status denda diubah menjadi \'selesai\'', 2, 'denda', '2026-02-11', '2026-02-11 09:56:31', '2026-02-11 09:56:31'),
+	(40, 'Status denda diubah menjadi \'selesai\'', 2, 'denda', '2026-02-11', '2026-02-11 09:56:37', '2026-02-11 09:56:37'),
+	(41, 'Mengubah data pengembalian ID: 2', 2, 'pengembalian', '2026-02-11', '2026-02-11 09:59:08', '2026-02-11 09:59:08'),
+	(42, 'Mengubah data alat: Kipas Angin', 2, 'alat', '2026-02-11', '2026-02-11 09:59:08', '2026-02-11 09:59:08'),
+	(43, 'Mengubah data pengembalian ID: 1', 2, 'pengembalian', '2026-02-11', '2026-02-11 09:59:12', '2026-02-11 09:59:12'),
+	(44, 'Mengubah data alat: AC', 2, 'alat', '2026-02-11', '2026-02-11 09:59:12', '2026-02-11 09:59:12'),
+	(45, 'Mengajukan peminjaman alat: AC', 2, 'peminjaman', '2026-02-11', '2026-02-11 09:59:44', '2026-02-11 09:59:44'),
+	(46, 'Mengubah data alat: AC', 2, 'alat', '2026-02-11', '2026-02-11 09:59:44', '2026-02-11 09:59:44'),
+	(47, 'Status peminjaman diubah dari \'menunggu\' menjadi \'ditolak\'', 2, 'peminjaman', '2026-02-11', '2026-02-11 10:00:02', '2026-02-11 10:00:02'),
+	(48, 'Mengubah data alat: AC', 2, 'alat', '2026-02-11', '2026-02-11 10:00:02', '2026-02-11 10:00:02'),
+	(49, 'Logout dari sistem', 2, 'logout', '2026-02-11', '2026-02-11 10:01:44', '2026-02-11 10:01:44'),
+	(50, 'Login ke sistem', 3, 'login', '2026-02-11', '2026-02-11 10:02:00', '2026-02-11 10:02:00'),
+	(51, 'Mengajukan peminjaman alat: AC', 3, 'peminjaman', '2026-02-11', '2026-02-11 10:02:42', '2026-02-11 10:02:42'),
+	(52, 'Mengubah data alat: AC', 3, 'alat', '2026-02-11', '2026-02-11 10:02:42', '2026-02-11 10:02:42'),
+	(53, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 1, 'peminjaman', '2026-02-11', '2026-02-11 10:03:03', '2026-02-11 10:03:03'),
+	(54, 'Mengembalikan alat dari peminjaman ID: 4', 3, 'pengembalian', '2026-02-11', '2026-02-11 10:03:41', '2026-02-11 10:03:41'),
+	(55, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 3, 'peminjaman', '2026-02-11', '2026-02-11 10:03:41', '2026-02-11 10:03:41'),
+	(56, 'Mengubah data alat: AC', 3, 'alat', '2026-02-11', '2026-02-11 10:03:41', '2026-02-11 10:03:41'),
+	(57, 'Logout dari sistem', 1, 'logout', '2026-02-11', '2026-02-11 10:03:54', '2026-02-11 10:03:54'),
+	(58, 'Login ke sistem', 2, 'login', '2026-02-11', '2026-02-11 10:04:05', '2026-02-11 10:04:05'),
+	(59, 'Mengubah data pengembalian ID: 3', 2, 'pengembalian', '2026-02-11', '2026-02-11 10:04:14', '2026-02-11 10:04:14'),
+	(60, 'Mengubah data alat: AC', 2, 'alat', '2026-02-11', '2026-02-11 10:04:14', '2026-02-11 10:04:14'),
+	(61, 'Menambahkan denda sebesar Rp 20.000 untuk user ID: 3', 2, 'denda', '2026-02-11', '2026-02-11 10:04:14', '2026-02-11 10:04:14'),
+	(62, 'Status denda diubah menjadi \'selesai\'', 2, 'denda', '2026-02-11', '2026-02-11 10:05:14', '2026-02-11 10:05:14'),
+	(63, 'Mengubah data pengembalian ID: 3', 2, 'pengembalian', '2026-02-11', '2026-02-11 10:05:47', '2026-02-11 10:05:47'),
+	(64, 'Mengubah data alat: AC', 2, 'alat', '2026-02-11', '2026-02-11 10:05:47', '2026-02-11 10:05:47'),
+	(65, 'Logout dari sistem', 2, 'logout', '2026-02-11', '2026-02-11 10:06:28', '2026-02-11 10:06:28'),
+	(66, 'Login ke sistem', 1, 'login', '2026-04-17', '2026-04-16 20:00:45', '2026-04-16 20:00:45'),
+	(67, 'Login ke sistem', 2, 'login', '2026-04-17', '2026-04-16 20:01:57', '2026-04-16 20:01:57'),
+	(68, 'Login ke sistem', 3, 'login', '2026-04-17', '2026-04-16 20:02:37', '2026-04-16 20:02:37'),
+	(69, 'Login ke sistem', 1, 'login', '2026-04-20', '2026-04-19 18:51:05', '2026-04-19 18:51:05'),
+	(70, 'Login ke sistem', 1, 'login', '2026-04-20', '2026-04-19 19:16:51', '2026-04-19 19:16:51'),
+	(71, 'Login ke sistem', 1, 'login', '2026-04-20', '2026-04-19 19:19:35', '2026-04-19 19:19:35'),
+	(72, 'Logout dari sistem', 1, 'logout', '2026-04-20', '2026-04-19 19:23:46', '2026-04-19 19:23:46'),
+	(73, 'Logout dari sistem', 1, 'logout', '2026-04-20', '2026-04-19 19:24:13', '2026-04-19 19:24:13'),
+	(74, 'Login ke sistem', 1, 'login', '2026-04-20', '2026-04-19 19:24:28', '2026-04-19 19:24:28'),
+	(75, 'Login ke sistem', 2, 'login', '2026-04-20', '2026-04-19 19:24:37', '2026-04-19 19:24:37'),
+	(76, 'Login ke sistem', 3, 'login', '2026-04-20', '2026-04-19 19:24:58', '2026-04-19 19:24:58'),
+	(77, 'Mengajukan peminjaman alat: AC', 3, 'peminjaman', '2026-04-20', '2026-04-19 19:31:07', '2026-04-19 19:31:07'),
+	(78, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 19:31:07', '2026-04-19 19:31:07'),
+	(79, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 19:31:19', '2026-04-19 19:31:19'),
+	(80, 'Mengembalikan alat dari peminjaman ID: 5', 2, 'pengembalian', '2026-04-20', '2026-04-19 19:32:56', '2026-04-19 19:32:56'),
+	(81, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 19:32:56', '2026-04-19 19:32:56'),
+	(82, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 19:32:56', '2026-04-19 19:32:56'),
+	(83, 'Mengubah data pengembalian ID: 4', 2, 'pengembalian', '2026-04-20', '2026-04-19 19:33:02', '2026-04-19 19:33:02'),
+	(84, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 19:33:02', '2026-04-19 19:33:02'),
+	(85, 'Mengubah data pengembalian ID: 4', 2, 'pengembalian', '2026-04-20', '2026-04-19 19:33:27', '2026-04-19 19:33:27'),
+	(86, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 19:33:27', '2026-04-19 19:33:27'),
+	(87, 'Mengajukan peminjaman alat: AC', 3, 'peminjaman', '2026-04-20', '2026-04-19 19:37:24', '2026-04-19 19:37:24'),
+	(88, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 19:37:24', '2026-04-19 19:37:24'),
+	(89, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 19:38:03', '2026-04-19 19:38:03'),
+	(90, 'Mengembalikan alat dari peminjaman ID: 6', 3, 'pengembalian', '2026-04-20', '2026-04-19 19:38:22', '2026-04-19 19:38:22'),
+	(91, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 3, 'peminjaman', '2026-04-20', '2026-04-19 19:38:22', '2026-04-19 19:38:22'),
+	(92, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 19:38:22', '2026-04-19 19:38:22'),
+	(93, 'Mengubah data pengembalian ID: 5', 2, 'pengembalian', '2026-04-20', '2026-04-19 19:38:45', '2026-04-19 19:38:45'),
+	(94, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 19:38:45', '2026-04-19 19:38:45'),
+	(95, 'Menambahkan denda sebesar Rp 25.000 untuk user ID: 3', 2, 'denda', '2026-04-20', '2026-04-19 19:38:45', '2026-04-19 19:38:45'),
+	(96, 'Mengajukan peminjaman alat: Kipas Angin', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:08:28', '2026-04-19 20:08:28'),
+	(97, 'Mengubah data alat: Kipas Angin', 3, 'alat', '2026-04-20', '2026-04-19 20:08:28', '2026-04-19 20:08:28'),
+	(98, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 20:10:08', '2026-04-19 20:10:08'),
+	(99, 'Menambahkan alat baru: PC 01', 1, 'alat', '2026-04-20', '2026-04-19 20:19:49', '2026-04-19 20:19:49'),
+	(100, 'Menambahkan alat baru: Laptop 001', 1, 'alat', '2026-04-20', '2026-04-19 20:20:12', '2026-04-19 20:20:12'),
+	(101, 'Menambahkan alat baru: PC 002', 1, 'alat', '2026-04-20', '2026-04-19 20:22:17', '2026-04-19 20:22:17'),
+	(102, 'Menambahkan alat baru: Laptop 002', 1, 'alat', '2026-04-20', '2026-04-19 20:22:40', '2026-04-19 20:22:40'),
+	(103, 'Logout dari sistem', 1, 'logout', '2026-04-20', '2026-04-19 20:23:25', '2026-04-19 20:23:25'),
+	(104, 'Login ke sistem', 2, 'login', '2026-04-20', '2026-04-19 20:24:20', '2026-04-19 20:24:20'),
+	(105, 'Mengubah data pengembalian ID: 5', 2, 'pengembalian', '2026-04-20', '2026-04-19 20:24:52', '2026-04-19 20:24:52'),
+	(106, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 20:24:52', '2026-04-19 20:24:52'),
+	(107, 'Mengajukan peminjaman alat: AC', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:25:44', '2026-04-19 20:25:44'),
+	(108, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 20:25:44', '2026-04-19 20:25:44'),
+	(109, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 20:25:55', '2026-04-19 20:25:55'),
+	(110, 'Mengembalikan alat dari peminjaman ID: 8', 3, 'pengembalian', '2026-04-20', '2026-04-19 20:26:38', '2026-04-19 20:26:38'),
+	(111, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:26:38', '2026-04-19 20:26:38'),
+	(112, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 20:26:38', '2026-04-19 20:26:38'),
+	(113, 'Mengubah data pengembalian ID: 6', 2, 'pengembalian', '2026-04-20', '2026-04-19 20:26:47', '2026-04-19 20:26:47'),
+	(114, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 20:26:47', '2026-04-19 20:26:47'),
+	(115, 'Mengembalikan alat dari peminjaman ID: 7', 3, 'pengembalian', '2026-04-20', '2026-04-19 20:33:39', '2026-04-19 20:33:39'),
+	(116, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:33:39', '2026-04-19 20:33:39'),
+	(117, 'Mengubah data alat: Kipas Angin', 3, 'alat', '2026-04-20', '2026-04-19 20:33:39', '2026-04-19 20:33:39'),
+	(118, 'Mengubah data pengembalian ID: 7', 2, 'pengembalian', '2026-04-20', '2026-04-19 20:36:42', '2026-04-19 20:36:42'),
+	(119, 'Status peminjaman diubah dari \'dikembalikan\' menjadi \'disetujui\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 20:36:42', '2026-04-19 20:36:42'),
+	(120, 'Mengubah data alat: Kipas Angin', 2, 'alat', '2026-04-20', '2026-04-19 20:36:42', '2026-04-19 20:36:42'),
+	(121, 'Mengubah data pengembalian ID: 6', 2, 'pengembalian', '2026-04-20', '2026-04-19 20:36:47', '2026-04-19 20:36:47'),
+	(122, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 20:36:47', '2026-04-19 20:36:47'),
+	(123, 'Mengembalikan alat dari peminjaman ID: 7', 3, 'pengembalian', '2026-04-20', '2026-04-19 20:37:12', '2026-04-19 20:37:12'),
+	(124, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:37:12', '2026-04-19 20:37:12'),
+	(125, 'Mengubah data alat: Kipas Angin', 3, 'alat', '2026-04-20', '2026-04-19 20:37:12', '2026-04-19 20:37:12'),
+	(126, 'Menambahkan alat baru: PC 003', 1, 'alat', '2026-04-20', '2026-04-19 20:44:42', '2026-04-19 20:44:42'),
+	(127, 'Menambahkan alat baru: Laptop 003', 1, 'alat', '2026-04-20', '2026-04-19 20:49:39', '2026-04-19 20:49:39'),
+	(128, 'Mengajukan peminjaman alat: Laptop 001', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:55:14', '2026-04-19 20:55:14'),
+	(129, 'Mengubah data alat: Laptop 001', 3, 'alat', '2026-04-20', '2026-04-19 20:55:14', '2026-04-19 20:55:14'),
+	(130, 'Mengajukan peminjaman alat: AC', 3, 'peminjaman', '2026-04-20', '2026-04-19 20:59:57', '2026-04-19 20:59:57'),
+	(131, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 20:59:57', '2026-04-19 20:59:57'),
+	(132, 'Status peminjaman diubah dari \'menunggu\' menjadi \'disetujui\'', 2, 'peminjaman', '2026-04-20', '2026-04-19 21:00:24', '2026-04-19 21:00:24'),
+	(133, 'Mengembalikan alat dari peminjaman ID: 10', 3, 'pengembalian', '2026-04-20', '2026-04-19 21:01:27', '2026-04-19 21:01:27'),
+	(134, 'Status peminjaman diubah dari \'disetujui\' menjadi \'dikembalikan\'', 3, 'peminjaman', '2026-04-20', '2026-04-19 21:01:27', '2026-04-19 21:01:27'),
+	(135, 'Mengubah data alat: AC', 3, 'alat', '2026-04-20', '2026-04-19 21:01:27', '2026-04-19 21:01:27'),
+	(136, 'Mengubah data pengembalian ID: 9', 2, 'pengembalian', '2026-04-20', '2026-04-19 21:01:49', '2026-04-19 21:01:49'),
+	(137, 'Mengubah data alat: AC', 2, 'alat', '2026-04-20', '2026-04-19 21:01:49', '2026-04-19 21:01:49'),
+	(138, 'Menambahkan denda sebesar Rp 20.000 untuk user ID: 3', 2, 'denda', '2026-04-20', '2026-04-19 21:01:49', '2026-04-19 21:01:49'),
+	(139, 'Status denda diubah menjadi \'selesai\'', 2, 'denda', '2026-04-20', '2026-04-19 21:03:16', '2026-04-19 21:03:16');
 
 -- Dumping structure for table peminjaman-alat.migrations
 CREATE TABLE IF NOT EXISTS `migrations` (
@@ -155,7 +342,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table peminjaman-alat.migrations: ~0 rows (approximately)
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -169,7 +356,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(8, '2026_02_08_053258_pengembalian', 1),
 	(9, '2026_02_08_053304_denda', 1),
 	(10, '2026_02_08_053311_payment', 1),
-	(11, '2026_02_08_053321_log_aktivitas', 1);
+	(11, '2026_02_08_053321_log_aktivitas', 1),
+	(12, '2026_02_08_053313_add_deskripsi_to_peminjaman', 2),
+	(13, '2026_02_08_053314_create_bukti_pengembalian_table', 2);
 
 -- Dumping structure for table peminjaman-alat.password_reset_tokens
 CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
@@ -193,9 +382,14 @@ CREATE TABLE IF NOT EXISTS `payment` (
   PRIMARY KEY (`id`),
   KEY `payment_id_denda_foreign` (`id_denda`),
   CONSTRAINT `payment_id_denda_foreign` FOREIGN KEY (`id_denda`) REFERENCES `denda` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.payment: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.payment: ~2 rows (approximately)
+INSERT INTO `payment` (`id`, `id_denda`, `status`, `nominal`, `proof_img`, `created_at`, `updated_at`) VALUES
+	(1, 1, 'disetujui', 35000, 'proof_images/1770815775_borrowing.png', '2026-02-11 06:16:16', '2026-02-11 09:56:37'),
+	(2, 2, 'disetujui', 10000, 'proof_images/1770828979_borrowing.png', '2026-02-11 09:56:19', '2026-02-11 09:56:31'),
+	(3, 3, 'disetujui', 20000, 'proof_images/1770829497_flowchart alat peminjaman barang -Logout.jpg', '2026-02-11 10:04:57', '2026-02-11 10:05:14'),
+	(4, 5, 'disetujui', 20000, 'proof_images/1776657778_giphy.gif', '2026-04-19 21:02:58', '2026-04-19 21:03:16');
 
 -- Dumping structure for table peminjaman-alat.peminjaman
 CREATE TABLE IF NOT EXISTS `peminjaman` (
@@ -203,6 +397,7 @@ CREATE TABLE IF NOT EXISTS `peminjaman` (
   `id_user` bigint unsigned NOT NULL,
   `id_alat` bigint unsigned NOT NULL,
   `tanggal_pengembalian` date NOT NULL,
+  `deskripsi` text COLLATE utf8mb4_unicode_ci,
   `status` enum('menunggu','disetujui','ditolak','dikembalikan') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'menunggu',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -211,9 +406,20 @@ CREATE TABLE IF NOT EXISTS `peminjaman` (
   KEY `peminjaman_id_alat_foreign` (`id_alat`),
   CONSTRAINT `peminjaman_id_alat_foreign` FOREIGN KEY (`id_alat`) REFERENCES `alat` (`id`) ON DELETE CASCADE,
   CONSTRAINT `peminjaman_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.peminjaman: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.peminjaman: ~4 rows (approximately)
+INSERT INTO `peminjaman` (`id`, `id_user`, `id_alat`, `tanggal_pengembalian`, `deskripsi`, `status`, `created_at`, `updated_at`) VALUES
+	(1, 3, 2, '2026-02-12', NULL, 'dikembalikan', '2026-02-11 06:06:20', '2026-02-11 06:08:10'),
+	(2, 3, 1, '2026-02-13', NULL, 'dikembalikan', '2026-02-11 09:52:43', '2026-02-11 09:53:58'),
+	(3, 3, 2, '2026-02-14', NULL, 'ditolak', '2026-02-11 09:59:44', '2026-02-11 10:00:02'),
+	(4, 3, 2, '2026-02-12', NULL, 'dikembalikan', '2026-02-11 10:02:42', '2026-02-11 10:03:41'),
+	(5, 3, 2, '2026-04-21', NULL, 'dikembalikan', '2026-04-19 19:31:07', '2026-04-19 19:32:56'),
+	(6, 3, 2, '2026-04-18', NULL, 'dikembalikan', '2026-04-19 19:37:24', '2026-04-19 19:38:22'),
+	(7, 3, 1, '2026-04-21', NULL, 'dikembalikan', '2026-04-19 20:08:28', '2026-04-19 20:37:12'),
+	(8, 3, 2, '2026-04-21', 'untuk ruangan B-21', 'dikembalikan', '2026-04-19 20:25:44', '2026-04-19 20:26:38'),
+	(9, 3, 5, '2026-04-23', 'Laptop untuk kerja', 'menunggu', '2026-04-19 20:55:14', '2026-04-19 20:55:14'),
+	(10, 3, 2, '2026-04-23', 'ac untuk ruangan A001', 'dikembalikan', '2026-04-19 20:59:57', '2026-04-19 21:01:27');
 
 -- Dumping structure for table peminjaman-alat.pengembalian
 CREATE TABLE IF NOT EXISTS `pengembalian` (
@@ -230,9 +436,19 @@ CREATE TABLE IF NOT EXISTS `pengembalian` (
   KEY `pengembalian_id_user_foreign` (`id_user`),
   CONSTRAINT `pengembalian_id_peminjaman_foreign` FOREIGN KEY (`id_peminjaman`) REFERENCES `peminjaman` (`id`) ON DELETE CASCADE,
   CONSTRAINT `pengembalian_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.pengembalian: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.pengembalian: ~2 rows (approximately)
+INSERT INTO `pengembalian` (`id`, `id_peminjaman`, `tanggal_kembali_realisasi`, `id_user`, `status`, `hari_terlambat`, `created_at`, `updated_at`) VALUES
+	(1, 1, '2026-02-19', 3, 'selesai', 7, '2026-02-11 06:08:10', '2026-02-11 09:59:12'),
+	(2, 2, '2026-02-15', 3, 'selesai', 2, '2026-02-11 09:53:58', '2026-02-11 09:59:08'),
+	(3, 4, '2026-02-16', 3, 'selesai', 4, '2026-02-11 10:03:41', '2026-02-11 10:05:47'),
+	(4, 5, '2026-04-13', 3, 'selesai', 0, '2026-04-19 19:32:56', '2026-04-19 19:33:27'),
+	(5, 6, '2026-04-23', 3, 'selesai', 5, '2026-04-19 19:38:22', '2026-04-19 20:24:52'),
+	(6, 8, '2026-04-20', 3, 'selesai', 0, '2026-04-19 20:26:38', '2026-04-19 20:36:47'),
+	(7, 7, '2026-04-22', 3, 'ditolak', 1, '2026-04-19 20:33:39', '2026-04-19 20:36:42'),
+	(8, 7, '2026-04-23', 3, 'menunggu', 2, '2026-04-19 20:37:12', '2026-04-19 20:37:12'),
+	(9, 10, '2026-04-27', 3, 'disetujui', 4, '2026-04-19 21:01:27', '2026-04-19 21:01:49');
 
 -- Dumping structure for table peminjaman-alat.sessions
 CREATE TABLE IF NOT EXISTS `sessions` (
@@ -247,7 +463,12 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table peminjaman-alat.sessions: ~0 rows (approximately)
+-- Dumping data for table peminjaman-alat.sessions: ~7 rows (approximately)
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+	('aDrrKzgHzZi1WQFDY0Zjzt7sYdwJTYEcSq1HHb7r', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiWDNWanlvVE5nbkZsUHNDNXA2V3dZdUZlNjVPaGJyaUdweXNhbWRINSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9wZW1pbmphbWFuIjtzOjU6InJvdXRlIjtzOjE2OiJwZW1pbmphbWFuLmluZGV4Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1776657609),
+	('k6As1XcMMomAdYMRrYtVY2b1pQzU7Ei4RNIYgwDf', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZ2I3RkZvRFFIQ1k4M0h4dHhGeWxqc09FWFlYZEJhQ3JZUTVkV3o5MSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9wYXltZW50IjtzOjU6InJvdXRlIjtzOjEzOiJwYXltZW50LmluZGV4Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1776657798),
+	('QaOy9raxq2L6JGvxzvKMwdSTbccQHnmubD852JQ8', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVno5M1R4eU14SW5zeEc5R0FyZVpZMlB1dTBqZ2pPQ3NvTWRlNlZiYiI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjI3OiJodHRwOi8vbG9jYWxob3N0OjgwMDAvZGVuZGEiO3M6NToicm91dGUiO3M6MTE6ImRlbmRhLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1776658049),
+	('YiRLUrH2JwrinWxMOM7sY1rikCIQoLbE2dVcxgLQ', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoib0daYlA5eTNyakhkakw5Y1FPT3UxMkFheTdLNmVPM3ZSMGRRZWVsOCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9wZW1pbmphbWFuIjtzOjU6InJvdXRlIjtzOjE2OiJwZW1pbmphbWFuLmluZGV4Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1776657517);
 
 -- Dumping structure for table peminjaman-alat.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -265,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table peminjaman-alat.users: ~3 rows (approximately)
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES

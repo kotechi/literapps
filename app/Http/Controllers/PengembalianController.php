@@ -72,6 +72,8 @@ class PengembalianController extends Controller
             'id_peminjaman' => 'required|exists:peminjaman,id',
             'tanggal_kembali_realisasi' => 'required|date',
             'id_user' => 'nullable|exists:users,id',
+            'bukti_pengembalian' => 'nullable|array',
+            'bukti_pengembalian.*' => 'file|mimes:jpg,jpeg,png,pdf,webp|max:10240',
         ]);
 
         if(auth()->user()->isPeminjam()) {
@@ -97,6 +99,23 @@ class PengembalianController extends Controller
 
         $pengembalian = Pengembalian::create($validated);
 
+        foreach ($request->file('bukti_pengembalian', []) as $file) {
+            $path = $file->store('bukti-pengembalian', 'public');
+            $mimeType = $file->getMimeType() ?? '';
+
+            $tipeMedia = match (true) {
+                str_starts_with($mimeType, 'image/') => 'foto',
+                str_starts_with($mimeType, 'video/') => 'video',
+                default => 'dokumen',
+            };
+
+            $pengembalian->buktiPengembalian()->create([
+                'tipe_media' => $tipeMedia,
+                'path_file' => $path,
+                'keterangan' => null,
+            ]);
+        }
+
       
 
         // Update peminjaman status
@@ -113,9 +132,15 @@ class PengembalianController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Pengembalian $pengembalian)
     {
-        //
+        $pengembalian->load(['peminjaman.user', 'peminjaman.alat.kategori', 'user', 'buktiPengembalian', 'denda']);
+
+        if (auth()->user()->isPeminjam() && $pengembalian->peminjaman->id_user !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('pengembalian.show', compact('pengembalian'));
     }
 
     /**
@@ -140,9 +165,28 @@ class PengembalianController extends Controller
             'id_user' => 'required|exists:users,id',
             'status' => 'required|in:menunggu,disetujui,ditolak,selesai',
             'hari_terlambat' => 'required|integer|min:0',
+            'bukti_pengembalian' => 'nullable|array',
+            'bukti_pengembalian.*' => 'file|mimes:jpg,jpeg,png,pdf,webp|max:10240',
         ]);
 
         $pengembalian->update($validated);
+
+        foreach ($request->file('bukti_pengembalian', []) as $file) {
+            $path = $file->store('bukti-pengembalian', 'public');
+            $mimeType = $file->getMimeType() ?? '';
+
+            $tipeMedia = match (true) {
+                str_starts_with($mimeType, 'image/') => 'foto',
+                str_starts_with($mimeType, 'video/') => 'video',
+                default => 'dokumen',
+            };
+
+            $pengembalian->buktiPengembalian()->create([
+                'tipe_media' => $tipeMedia,
+                'path_file' => $path,
+                'keterangan' => null,
+            ]);
+        }
 
         return redirect()
             ->route('pengembalian.index')

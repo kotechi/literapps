@@ -31,7 +31,7 @@ class DendaController extends Controller
             })->where('status', 'menunggu')->count();
             $dendaLunas = Denda::whereHas('pengembalian.peminjaman', function($q) {
                 $q->where('id_user', auth()->id());
-            })->where('status', 'lunas')->count();
+            })->where('status', 'selesai')->count();
         } else {
             $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.alat', 'user'])
                 ->orderBy('created_at', 'desc')
@@ -40,7 +40,7 @@ class DendaController extends Controller
             // Summary untuk petugas/admin
             $totalDenda = Denda::sum('total_denda');
             $dendaMenunggu = Denda::where('status', 'menunggu')->count();
-            $dendaLunas = Denda::where('status', 'lunas')->count();
+            $dendaLunas = Denda::where('status', 'selesai')->count();
         }
 
         return view('denda.index', compact('denda', 'totalDenda', 'dendaMenunggu', 'dendaLunas'));

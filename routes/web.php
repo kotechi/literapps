@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\PeminjamanController::class, 'index'])->name('peminjaman.index');
         Route::get('/create', [\App\Http\Controllers\PeminjamanController::class, 'create'])->name('peminjaman.create');
         Route::post('/', [\App\Http\Controllers\PeminjamanController::class, 'store'])->name('peminjaman.store');
+        Route::get('/{peminjaman}', [\App\Http\Controllers\PeminjamanController::class, 'show'])->name('peminjaman.show');
         Route::get('/{peminjaman}/edit', [\App\Http\Controllers\PeminjamanController::class, 'edit'])->name('peminjaman.edit');
         Route::put('/{peminjaman}', [\App\Http\Controllers\PeminjamanController::class, 'update'])->name('peminjaman.update');
         Route::put('/{peminjaman}/confirm', [\App\Http\Controllers\PeminjamanController::class, 'confirm'])->name('peminjaman.confirm');
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\PengembalianController::class, 'index'])->name('pengembalian.index');
         Route::get('/create', [\App\Http\Controllers\PengembalianController::class, 'create'])->name('pengembalian.create');
         Route::post('/', [\App\Http\Controllers\PengembalianController::class, 'store'])->name('pengembalian.store');
+        Route::get('/{pengembalian}', [\App\Http\Controllers\PengembalianController::class, 'show'])->name('pengembalian.show');
         Route::get('/{pengembalian}/edit', [\App\Http\Controllers\PengembalianController::class, 'edit'])->name('pengembalian.edit');
         Route::put('/{pengembalian}', [\App\Http\Controllers\PengembalianController::class, 'update'])->name('pengembalian.update');
         Route::put('/{pengembalian}/confirm', [\App\Http\Controllers\PengembalianController::class, 'confirm'])->name('pengembalian.confirm');

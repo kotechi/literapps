@@ -48,4 +48,12 @@ class Pengembalian extends Model
     {
         return $this->hasMany(Denda::class, 'id_pengembalian');
     }
+
+    /**
+     * Get the bukti pengembalian for the pengembalian.
+     */
+    public function buktiPengembalian()
+    {
+        return $this->hasMany(BuktiPengembalian::class, 'id_pengembalian');
+    }
 }
