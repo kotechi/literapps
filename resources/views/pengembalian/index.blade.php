@@ -45,6 +45,17 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-800 px-6 py-4 rounded-lg shadow-md">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                    </svg>
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
+
         <!-- Summary Cards -->
         <div class="grid gap-6 md:grid-cols-3">
             <!-- Total Pengembalian -->
@@ -103,6 +114,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tanggal Kembali</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Terlambat</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Denda</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                         </tr>
@@ -123,6 +135,18 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                                     {{ $item->hari_terlambat }} hari
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                    @if($item->denda)
+                                        <div class="font-medium text-gray-900 dark:text-white">Rp {{ number_format($item->denda->total_denda) }}</div>
+                                        <div class="text-xs {{ $item->denda->status === 'selesai' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400' }}">
+                                            {{ $item->denda->status === 'selesai' ? 'Lunas' : 'Belum Lunas' }}
+                                        </div>
+                                    @elseif($item->hari_terlambat > 0)
+                                        <span class="text-xs text-gray-500">Menunggu persetujuan admin</span>
+                                    @else
+                                        <span class="text-xs text-green-600 dark:text-green-400">Tidak ada denda</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200">
                                         {{ ucfirst($item->status) }}
@@ -137,6 +161,11 @@
                                             </svg>
                                             Detail
                                         </a>
+                                        @if(auth()->user()->isSiswa() && $item->denda && $item->denda->status !== 'selesai')
+                                            <a href="{{ route('payment.create', ['id_denda' => $item->denda->id]) }}" class="inline-flex items-center px-3 py-1.5 bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900 dark:text-amber-300 dark:hover:bg-amber-800 rounded-md transition-colors">
+                                                Bayar Denda
+                                            </a>
+                                        @endif
                                         @if(auth()->user()->isAdmin())
                                             <a href="{{ route('pengembalian.edit', $item) }}" class="inline-flex items-center px-3 py-1.5 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 rounded-md transition-colors">
                                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,7 +217,7 @@
                             </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                         Tidak ada data pengembalian
                                     </td>
                                 </tr>

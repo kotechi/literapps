@@ -14,7 +14,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        if(auth()->user()->isPeminjam()) {
+        if(auth()->user()->isSiswa()) {
             $payment = Payment::with(['denda.pengembalian.peminjaman.user', 'denda.pengembalian.peminjaman.buku'])
                 ->whereHas('denda.pengembalian.peminjaman', function($q) {
                     $q->where('id_user', auth()->id());
@@ -51,12 +51,19 @@ class PaymentController extends Controller
      */
     public function create()
     {
+        $selectedDendaId = request()->get('id_denda');
+
         $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.buku'])
             ->where('status', 'menunggu')
+            ->when(auth()->user()->isSiswa(), function ($query) {
+                $query->whereHas('pengembalian.peminjaman', function ($subQuery) {
+                    $subQuery->where('id_user', auth()->id());
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('payment.create', compact('denda'));
+        return view('payment.create', compact('denda', 'selectedDendaId'));
     }
 
     /**
@@ -66,10 +73,29 @@ class PaymentController extends Controller
     {
         $validated = $request->validate([
             'id_denda' => 'required|exists:denda,id',
-            'nominal' => 'required|integer|min:0',
             'proof_img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        $denda = Denda::with('pengembalian.peminjaman')->findOrFail($validated['id_denda']);
+
+        if (auth()->user()->isSiswa() && $denda->pengembalian->peminjaman->id_user !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($denda->status === 'selesai') {
+            return back()->withInput()->withErrors(['id_denda' => 'Denda ini sudah lunas.']);
+        }
+
+        $existingPayment = Payment::where('id_denda', $denda->id)
+            ->whereIn('status', ['menunggu', 'disetujui'])
+            ->exists();
+
+        if ($existingPayment) {
+            return back()->withInput()->withErrors(['id_denda' => 'Denda ini sudah memiliki pengajuan pembayaran aktif.']);
+        }
+
+        $validated['nominal'] = $denda->total_denda;
+        $validated['status'] = 'menunggu';
 
         // Handle file upload
         if ($request->hasFile('proof_img')) {
@@ -141,6 +167,10 @@ class PaymentController extends Controller
      */
     public function confirm(Request $request, Payment $payment)
     {
+        if (! auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:disetujui,ditolak',
         ]);
@@ -150,6 +180,11 @@ class PaymentController extends Controller
         // Update denda status if payment approved
         if ($validated['status'] === 'disetujui') {
             $payment->denda->update(['status' => 'selesai']);
+            $payment->denda->pengembalian->update(['status' => 'selesai']);
+            $payment->denda->pengembalian->peminjaman->update(['status' => 'dikembalikan']);
+            $payment->denda->pengembalian->peminjaman->buku->update(['status' => 'tersedia']);
+        } else {
+            $payment->denda->update(['status' => 'menunggu']);
         }
 
         $message = $validated['status'] === 'disetujui'

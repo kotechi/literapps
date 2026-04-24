@@ -80,6 +80,9 @@
                     <flux:sidebar.item class="nav-item-modern" icon="arrow-path" :href="route('pengembalian.index')" :current="request()->routeIs('pengembalian.*')" wire:navigate>
                         {{ __('Pengembalian') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item class="nav-item-modern" icon="banknotes" :href="route('payment.index')" :current="request()->routeIs('payment.*')" wire:navigate>
+                        {{ __('Pembayaran Denda') }}
+                    </flux:sidebar.item>
                     @if(auth()->user()->isAdmin())
                     <flux:sidebar.item class="nav-item-modern" icon="identification" :href="route('anggota.index')" :current="request()->routeIs('anggota.*')" wire:navigate>
                         {{ __('Daftar Anggota') }}

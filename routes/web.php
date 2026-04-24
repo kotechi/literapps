@@ -67,6 +67,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/{pengembalian}', [\App\Http\Controllers\PengembalianController::class, 'update'])->name('pengembalian.update');
         Route::put('/{pengembalian}/confirm', [\App\Http\Controllers\PengembalianController::class, 'confirm'])->name('pengembalian.confirm');
     });
+    Route::prefix('payment')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PaymentController::class, 'index'])->name('payment.index');
+        Route::get('/create', [\App\Http\Controllers\PaymentController::class, 'create'])->name('payment.create');
+        Route::post('/', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.store');
+        Route::put('/{payment}/confirm', [\App\Http\Controllers\PaymentController::class, 'confirm'])->name('payment.confirm');
+    });
     Route::prefix('log-aktivitas')->group(function () {
         Route::get('/', [\App\Http\Controllers\LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
         Route::get('/{log_aktivitas}/edit', [\App\Http\Controllers\LogAktivitasController::class, 'edit'])->name('log-aktivitas.edit');

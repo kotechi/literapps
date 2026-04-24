@@ -81,7 +81,27 @@
                         <span class="text-gray-500 dark:text-gray-400">Status</span>
                         <span class="font-semibold text-gray-900 dark:text-white">{{ ucfirst($pengembalian->status) }}</span>
                     </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500 dark:text-gray-400">Denda</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">
+                            {{ $pengembalian->denda ? 'Rp '.number_format($pengembalian->denda->total_denda) : 'Tidak ada' }}
+                        </span>
+                    </div>
+                    @if($pengembalian->denda)
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Pelunasan Denda</span>
+                            <span class="font-semibold {{ $pengembalian->denda->status === 'selesai' ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400' }}">
+                                {{ $pengembalian->denda->status === 'selesai' ? 'Lunas' : 'Belum lunas' }}
+                            </span>
+                        </div>
+                    @endif
                 </div>
+
+                @if(auth()->user()->isSiswa() && $pengembalian->denda && $pengembalian->denda->status !== 'selesai')
+                    <a href="{{ route('payment.create', ['id_denda' => $pengembalian->denda->id]) }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-semibold transition-colors">
+                        Ajukan Pembayaran Denda
+                    </a>
+                @endif
             </div>
         </div>
 

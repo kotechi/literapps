@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Denda;
 use App\Models\Pengembalian;
 use App\Models\Peminjaman;
 use App\Models\User;
@@ -10,13 +11,15 @@ use Illuminate\Http\Request;
 
 class PengembalianController extends Controller
 {
+    private const DENDA_PER_HARI = 5000;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         if(auth()->user()->isSiswa()) {
-            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori', 'user'])
+            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori', 'user', 'denda.payment'])
                 ->whereHas('peminjaman', function($q) {
                     $q->where('id_user', auth()->id());
                 })
@@ -34,7 +37,7 @@ class PengembalianController extends Controller
                 $q->where('id_user', auth()->id());
             })->where('status', 'menunggu')->count();
         } else {
-            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori', 'user'])
+            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori', 'user', 'denda.payment'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
@@ -87,8 +90,18 @@ class PengembalianController extends Controller
         // }
 
         $peminjaman = Peminjaman::find($validated['id_peminjaman']);
-        $tanggalPengembalian = Carbon::parse($peminjaman->tgl_pengembalian);
+        $tanggalPinjam = Carbon::parse($peminjaman->tgl_pinjam);
         $tanggalKembaliRealisasi = Carbon::parse($validated['tanggal_kembali_realisasi']);
+
+        if ($tanggalKembaliRealisasi->lt($tanggalPinjam)) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'tanggal_kembali_realisasi' => 'Tanggal kembali realisasi tidak boleh lebih awal dari tanggal pinjam.',
+                ]);
+        }
+
+        $tanggalPengembalian = Carbon::parse($peminjaman->tgl_pengembalian);
 
         $hariTerlambat = $tanggalPengembalian->diffInDays($tanggalKembaliRealisasi, false);
         $hariTerlambat = max(0, $hariTerlambat);
@@ -133,7 +146,7 @@ class PengembalianController extends Controller
      */
     public function show(Pengembalian $pengembalian)
     {
-        $pengembalian->load(['peminjaman.user', 'peminjaman.buku.kategori', 'user', 'buktiPengembalian']);
+        $pengembalian->load(['peminjaman.user', 'peminjaman.buku.kategori', 'user', 'buktiPengembalian', 'denda.payment']);
 
         if (auth()->user()->isSiswa() && $pengembalian->peminjaman->id_user !== auth()->id()) {
             abort(403);
@@ -201,6 +214,12 @@ class PengembalianController extends Controller
             'status' => 'required|in:disetujui,ditolak,selesai',
         ]);
 
+        if ($validated['status'] === 'selesai' && $pengembalian->denda && $pengembalian->denda->status !== 'selesai') {
+            return redirect()
+                ->route('pengembalian.index')
+                ->with('error', 'Pengembalian belum bisa diselesaikan karena denda belum lunas.');
+        }
+
         $message = match($validated['status']) {
             'disetujui' => 'Pengembalian berhasil disetujui.',
             'ditolak' => 'Pengembalian berhasil ditolak.',
@@ -212,10 +231,28 @@ class PengembalianController extends Controller
 
             $pengembalian->peminjaman->buku->update(['status' => 'tersedia']);
         }elseif($validated['status'] === 'disetujui') {
+            $totalDenda = $pengembalian->hari_terlambat * self::DENDA_PER_HARI;
+
+            if ($totalDenda > 0) {
+                Denda::updateOrCreate(
+                    ['id_pengembalian' => $pengembalian->id],
+                    [
+                        'id_user' => $pengembalian->peminjaman->id_user,
+                        'nama_kategori' => 'Keterlambatan Pengembalian',
+                        'status' => 'menunggu',
+                        'total_denda' => $totalDenda,
+                    ]
+                );
+            }
+
             $pengembalian->peminjaman->update(['status' => 'dikembalikan']);
 
             $pengembalian->peminjaman->buku->update(['status' => 'tidak_tersedia']);
         }elseif($validated['status'] === 'ditolak') {
+            if ($pengembalian->denda && $pengembalian->denda->status !== 'selesai') {
+                $pengembalian->denda->delete();
+            }
+
             $pengembalian->peminjaman->update(['status' => 'disetujui']);
 
             $pengembalian->peminjaman->buku->update(['status' => 'tidak_tersedia']);

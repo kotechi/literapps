@@ -24,7 +24,7 @@
                                 required>
                             <option value="">Pilih Denda</option>
                             @foreach($denda as $item)
-                                <option value="{{ $item->id }}" {{ old('id_denda') == $item->id ? 'selected' : '' }}>
+                                <option value="{{ $item->id }}" data-total="{{ $item->total_denda }}" {{ (string) old('id_denda', $selectedDendaId ?? '') === (string) $item->id ? 'selected' : '' }}>
                                     {{ $item->pengembalian->peminjaman->user->name }} - {{ $item->nama_kategori }} (Rp {{ number_format($item->total_denda) }})
                                 </option>
                             @endforeach
@@ -36,7 +36,7 @@
 
                     <div>
                         <label for="nominal" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nominal Pembayaran</label>
-                        <input type="number" readonly name="nominal" id="nominal" value="{{ $denda->first() ? $denda->first()->total_denda : old('nominal') }}"
+                        <input type="number" readonly name="nominal" id="nominal" value="{{ old('nominal') }}"
                                class="block w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                required min="0">
                         @error('nominal')
@@ -72,4 +72,19 @@
             </form>
         </div>
     </div>
+
+    <script>
+        const dendaSelect = document.getElementById('id_denda');
+        const nominalInput = document.getElementById('nominal');
+
+        const syncNominal = () => {
+            const selected = dendaSelect.options[dendaSelect.selectedIndex];
+            nominalInput.value = selected ? (selected.dataset.total || '') : '';
+        };
+
+        if (dendaSelect && nominalInput) {
+            syncNominal();
+            dendaSelect.addEventListener('change', syncNominal);
+        }
+    </script>
 </x-layouts::app>

@@ -24,7 +24,7 @@
                                 required>
                             <option value="">Pilih Peminjaman</option>
                             @foreach($peminjaman as $item)
-                                <option value="{{ $item->id }}" {{ old('id_peminjaman') == $item->id ? 'selected' : '' }}>
+                                <option value="{{ $item->id }}" data-tgl-pinjam="{{ $item->tgl_pinjam->format('Y-m-d') }}" {{ old('id_peminjaman') == $item->id ? 'selected' : '' }}>
                                     {{ $item->user->name }} - {{ $item->buku->nama_buku }} ({{ $item->buku->kategori->nama_kategori }})
                                 </option>
                             @endforeach
@@ -106,8 +106,31 @@
 
     <script>
         // File preview untuk bukti pengembalian
+        const peminjamanSelect = document.getElementById('id_peminjaman');
+        const tanggalKembaliInput = document.getElementById('tanggal_kembali_realisasi');
         const buktiInput = document.getElementById('bukti_pengembalian');
         const buktiPreview = document.getElementById('bukti_preview');
+
+        const syncMinTanggalKembali = () => {
+            const selectedOption = peminjamanSelect.options[peminjamanSelect.selectedIndex];
+            const tglPinjam = selectedOption ? selectedOption.dataset.tglPinjam : null;
+
+            if (!tglPinjam) {
+                tanggalKembaliInput.removeAttribute('min');
+                return;
+            }
+
+            tanggalKembaliInput.min = tglPinjam;
+
+            if (tanggalKembaliInput.value && tanggalKembaliInput.value < tglPinjam) {
+                tanggalKembaliInput.value = tglPinjam;
+            }
+        };
+
+        if (peminjamanSelect && tanggalKembaliInput) {
+            syncMinTanggalKembali();
+            peminjamanSelect.addEventListener('change', syncMinTanggalKembali);
+        }
 
         if (buktiInput) {
             buktiInput.addEventListener('change', function(e) {
