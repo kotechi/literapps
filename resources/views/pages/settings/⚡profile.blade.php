@@ -35,10 +35,6 @@ new class extends Component {
 
         $user->fill($validated);
 
-        if ($user->isDirty('username')) {
-            $user->username_verified_at = null;
-        }
-
         $user->save();
 
         $this->dispatch('profile-updated', name: $user->name);

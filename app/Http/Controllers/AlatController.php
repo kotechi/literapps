@@ -9,18 +9,48 @@ use Illuminate\Http\Request;
 class AlatController extends Controller
 {
     /**
+     * Build the buku query from request filters.
+     */
+    protected function bukuQuery(Request $request)
+    {
+        $query = Buku::with('kategori');
+
+        $search = $request->get('q');
+        $status = $request->get('status');
+        $kategoriId = $request->get('kategori');
+
+        $query->when($search, function ($builder) use ($search) {
+            $builder->where(function ($subQuery) use ($search) {
+                $subQuery->where('nama_buku', 'like', '%' . $search . '%')
+                    ->orWhereHas('kategori', function ($kategoriQuery) use ($search) {
+                        $kategoriQuery->where('nama_kategori', 'like', '%' . $search . '%');
+                    });
+            });
+        });
+
+        $query->when($status, fn ($builder) => $builder->where('status', $status));
+        $query->when($kategoriId, fn ($builder) => $builder->where('id_kategori', $kategoriId));
+
+        return $query;
+    }
+
+    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $status = request()->get('status');
+        $kategori = Kategori::orderBy('nama_kategori')->get();
+        $status = $request->get('status');
+        $selectedKategori = $request->get('kategori');
 
-        $buku = Buku::with('kategori')
-            ->when($status, fn ($q) => $q->where('status', $status))
+        $buku = $this->bukuQuery($request)
             ->paginate(15)
             ->withQueryString();
 
-        return view('buku.index', compact('buku', 'status'));
+        $availableCount = (clone $this->bukuQuery($request))->where('status', 'tersedia')->count();
+        $unavailableCount = (clone $this->bukuQuery($request))->where('status', 'tidak_tersedia')->count();
+
+        return view('buku.index', compact('buku', 'status', 'kategori', 'selectedKategori', 'availableCount', 'unavailableCount'));
     }
 
     /**
@@ -102,22 +132,18 @@ class AlatController extends Controller
      */
     public function search(Request $request)
     {
+        $kategori = Kategori::orderBy('nama_kategori')->get();
         $query = $request->get('q');
         $status = $request->get('status');
+        $selectedKategori = $request->get('kategori');
 
-        $buku = Buku::with('kategori')
-            ->when($query, function ($q) use ($query) {
-                $q->where(function ($subQuery) use ($query) {
-                    $subQuery->where('nama_buku', 'like', '%' . $query . '%')
-                        ->orWhereHas('kategori', function ($kategoriQuery) use ($query) {
-                            $kategoriQuery->where('nama_kategori', 'like', '%' . $query . '%');
-                        });
-                });
-            })
-            ->when($status, fn ($q) => $q->where('status', $status))
+        $buku = $this->bukuQuery($request)
             ->paginate(15)
             ->withQueryString();
 
-        return view('buku.index', compact('buku', 'query', 'status'));
+        $availableCount = (clone $this->bukuQuery($request))->where('status', 'tersedia')->count();
+        $unavailableCount = (clone $this->bukuQuery($request))->where('status', 'tidak_tersedia')->count();
+
+        return view('buku.index', compact('buku', 'query', 'status', 'kategori', 'selectedKategori', 'availableCount', 'unavailableCount'));
     }
 }

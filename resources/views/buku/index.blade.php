@@ -1,7 +1,7 @@
 <x-layouts::app :title="'Daftar buku'">
     <div class="space-y-6">
         <!-- Page Header -->
-        <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 dark:from-indigo-700 dark:via-purple-700 dark:to-purple-800 rounded-xl shadow-lg p-6">
+        <div class="bg-linear-to-r from-indigo-600 via-purple-600 to-purple-700 dark:from-indigo-700 dark:via-purple-700 dark:to-purple-800 rounded-xl shadow-lg p-6">
             <div class="flex justify-between items-center">
                 <div class="text-white">
                     <h1 class="text-3xl font-bold mb-1">Daftar buku</h1>
@@ -15,6 +15,36 @@
                     Tambah buku
                 </a>
                 @endif
+            </div>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Buku Tersedia</p>
+                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ $availableCount }}</p>
+                    </div>
+                    <div class="rounded-full bg-green-100 dark:bg-green-900/40 p-3 text-green-700 dark:text-green-300">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Buku Tidak Tersedia</p>
+                        <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ $unavailableCount }}</p>
+                    </div>
+                    <div class="rounded-full bg-red-100 dark:bg-red-900/40 p-3 text-red-700 dark:text-red-300">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -37,6 +67,14 @@
                            class="w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
                 </div>
                 <div>
+                    <select name="kategori" class="w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
+                        <option value="">Semua Kategori</option>
+                        @foreach($kategori as $item)
+                            <option value="{{ $item->id }}" @selected((string) ($selectedKategori ?? '') === (string) $item->id)>{{ $item->nama_kategori }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
                     <select name="status" class="w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
                         <option value="">Semua Status</option>
                         <option value="tersedia" @selected(($status ?? '') === 'tersedia')>Tersedia</option>
@@ -49,7 +87,7 @@
                     </svg>
                     Cari
                 </button>
-                @if(isset($query) || !empty($status ?? null))
+                @if(isset($query) || !empty($status ?? null) || !empty($selectedKategori ?? null))
                     <a href="{{ route('buku.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -84,10 +122,7 @@
                                     {{ $item->kategori->nama_kategori }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @if($item->status == 'tersedia') bg-green-100 text-green-800
-                                        @else bg-red-100 text-red-800
-                                        @endif">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $item->status == 'tersedia' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                         {{ ucfirst($item->status) }}
                                     </span>
                                 </td>
