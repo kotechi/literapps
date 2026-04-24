@@ -26,7 +26,7 @@
                             <option value="">Pilih Peminjaman</option>
                             @foreach($peminjaman as $item)
                                 <option value="{{ $item->id }}" {{ old('id_peminjaman', $pengembalian->id_peminjaman) == $item->id ? 'selected' : '' }}>
-                                    {{ $item->user->name }} - {{ $item->alat->nama_alat }} ({{ $item->alat->kategori->nama_kategori }})
+                                    {{ $item->user->name }} - {{ $item->buku->nama_buku }} ({{ $item->buku->kategori->nama_kategori }})
                                 </option>
                             @endforeach
                         </select>

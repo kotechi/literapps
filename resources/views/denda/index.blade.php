@@ -102,7 +102,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                     <div class="font-medium">{{ $item->pengembalian->peminjaman->user->name }}</div>
-                                    <div class="text-gray-500 dark:text-gray-400">{{ $item->pengembalian->peminjaman->alat->nama_alat }}</div>
+                                    <div class="text-gray-500 dark:text-gray-400">{{ $item->pengembalian->peminjaman->buku->nama_buku }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                                     {{ $item->user->name }}

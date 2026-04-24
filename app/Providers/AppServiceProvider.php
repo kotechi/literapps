@@ -34,8 +34,7 @@ class AppServiceProvider extends ServiceProvider
     {
         \App\Models\Peminjaman::observe(\App\Observers\PeminjamanObserver::class);
         \App\Models\Pengembalian::observe(\App\Observers\PengembalianObserver::class);
-        \App\Models\Alat::observe(\App\Observers\AlatObserver::class);
-        \App\Models\Denda::observe(\App\Observers\DendaObserver::class);
+        \App\Models\Buku::observe(\App\Observers\BukuObserver::class);
         \App\Models\Kategori::observe(\App\Observers\KategoriObserver::class);
     }
 

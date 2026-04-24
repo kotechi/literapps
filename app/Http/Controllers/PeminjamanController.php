@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
-use App\Models\Alat;
+use App\Models\buku;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -14,24 +14,24 @@ class PeminjamanController extends Controller
      */
     public function index()
     {
-        if(auth()->user()->isPeminjam()) {
+        if(auth()->user()->isSiswa()) {
         
-            $peminjaman = Peminjaman::with(['user', 'alat.kategori'])
+            $peminjaman = Peminjaman::with(['user', 'buku.kategori'])
                 ->where('id_user', auth()->id())
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
-            // Summary untuk peminjam
+            // Summary untuk siswa
             $totalPeminjaman = Peminjaman::where('id_user', auth()->id())->count();
             $peminjamanDisetujui = Peminjaman::where('id_user', auth()->id())->where('status', 'disetujui')->count();
             $peminjamanMenunggu = Peminjaman::where('id_user', auth()->id())->where('status', 'menunggu')->count();
         } else {
                         
-            $peminjaman = Peminjaman::with(['user', 'alat.kategori'])
+            $peminjaman = Peminjaman::with(['user', 'buku.kategori'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
-            // Summary untuk petugas/admin
+            // Summary untuk admin
             $totalPeminjaman = Peminjaman::count();
             $peminjamanDisetujui = Peminjaman::where('status', 'disetujui')->count();
             $peminjamanMenunggu = Peminjaman::where('status', 'menunggu')->count();
@@ -45,12 +45,12 @@ class PeminjamanController extends Controller
     public function create()
     {
         $users = User::orderBy('name')->get();
-        $alat = Alat::with('kategori')
+        $buku = buku::with('kategori')
             ->where('status', 'tersedia')
-            ->orderBy('nama_alat')
+            ->orderBy('nama_buku')
             ->get();
 
-        return view('peminjaman.create', compact('users', 'alat'));
+        return view('peminjaman.create', compact('users', 'buku'));
     }
 
     /**
@@ -60,8 +60,9 @@ class PeminjamanController extends Controller
     {
         $validated = $request->validate([
             'id_user' => 'nullable|exists:users,id',
-            'id_alat' => 'required|exists:alat,id',
-            'tanggal_pengembalian' => 'required|date|after:today',
+            'id_buku' => 'required|exists:buku,id',
+            'tgl_pinjam' => 'nullable|date',
+            'tgl_pengembalian' => 'required|date|after:today',
             'deskripsi' => 'nullable|string|max:1000',
         ]);
 
@@ -69,18 +70,22 @@ class PeminjamanController extends Controller
             $validated['id_user'] = auth()->id();
         }
 
-        // Check if alat is available
-        $alat = Alat::find($validated['id_alat']);
-        if ($alat->status !== 'tersedia') {
+        if (empty($validated['tgl_pinjam'])) {
+            $validated['tgl_pinjam'] = now()->toDateString();
+        }
+
+        // Check if buku is available
+        $buku = buku::find($validated['id_buku']);
+        if ($buku->status !== 'tersedia') {
             return back()
                 ->withInput()
-                ->withErrors(['id_alat' => 'Alat tidak tersedia untuk dipinjam.']);
+                ->withErrors(['id_buku' => 'buku tidak tersedia untuk dipinjam.']);
         }
 
         Peminjaman::create($validated);
 
-        // Update alat status to tidak_tersedia
-        $alat->update(['status' => 'tidak_tersedia']);
+        // Update buku status to tidak_tersedia
+        $buku->update(['status' => 'tidak_tersedia']);
 
         return redirect()
             ->route('peminjaman.index')
@@ -92,9 +97,9 @@ class PeminjamanController extends Controller
      */
     public function show(Peminjaman $peminjaman)
     {
-        $peminjaman->load(['user', 'alat.kategori', 'pengembalian.user', 'pengembalian.buktiPengembalian', 'pengembalian.denda']);
+        $peminjaman->load(['user', 'buku.kategori', 'pengembalian.user', 'pengembalian.buktiPengembalian']);
 
-        if (auth()->user()->isPeminjam() && $peminjaman->id_user !== auth()->id()) {
+        if (auth()->user()->isSiswa() && $peminjaman->id_user !== auth()->id()) {
             abort(403);
         }
 
@@ -107,9 +112,9 @@ class PeminjamanController extends Controller
     public function edit(Peminjaman $peminjaman)
     {
         $users = User::orderBy('name')->get();
-        $alat = Alat::with('kategori')->orderBy('nama_alat')->get();
+        $buku = buku::with('kategori')->orderBy('nama_buku')->get();
 
-        return view('peminjaman.edit', compact('peminjaman', 'users', 'alat'));
+        return view('peminjaman.edit', compact('peminjaman', 'users', 'buku'));
     }
 
     /**
@@ -119,27 +124,28 @@ class PeminjamanController extends Controller
     {
         $validated = $request->validate([
             'id_user' => 'nullable|exists:users,id',
-            'id_alat' => 'required|exists:alat,id',
-            'tanggal_pengembalian' => 'required|date|after:today',
+            'id_buku' => 'required|exists:buku,id',
+            'tgl_pinjam' => 'required|date',
+            'tgl_pengembalian' => 'required|date|after:today',
             'deskripsi' => 'nullable|string|max:1000',
             'status' => 'required|in:menunggu,disetujui,ditolak,dikembalikan',
         ]);
 
-        $oldAlatId = $peminjaman->id_alat;
-        $newAlatId = $validated['id_alat'];
+        $oldbukuId = $peminjaman->id_buku;
+        $newbukuId = $validated['id_buku'];
 
         $peminjaman->update($validated);
 
-        // Update alat status if alat changed
-        if ($oldAlatId !== $newAlatId) {
-            $oldAlat = Alat::find($oldAlatId);
-            $newAlat = Alat::find($newAlatId);
+        // Update buku status if buku changed
+        if ($oldbukuId !== $newbukuId) {
+            $oldbuku = buku::find($oldbukuId);
+            $newbuku = buku::find($newbukuId);
 
-            if ($oldAlat) {
-                $oldAlat->update(['status' => 'tersedia']);
+            if ($oldbuku) {
+                $oldbuku->update(['status' => 'tersedia']);
             }
-            if ($newAlat) {
-                $newAlat->update(['status' => 'tidak_tersedia']);
+            if ($newbuku) {
+                $newbuku->update(['status' => 'tidak_tersedia']);
             }
         }
 
@@ -158,9 +164,9 @@ class PeminjamanController extends Controller
         ]);
         $peminjaman->update(['status' => $validated['status']]);
         if($validated['status'] === 'ditolak') {
-            $peminjaman->alat->update(['status' => 'tersedia']);
+            $peminjaman->buku->update(['status' => 'tersedia']);
         }elseif($validated['status'] === 'disetujui') {
-            $peminjaman->alat->update(['status' => 'tidak_tersedia']);
+            $peminjaman->buku->update(['status' => 'tidak_tersedia']);
         }
 
         $message = $validated['status'] === 'disetujui'
@@ -177,10 +183,10 @@ class PeminjamanController extends Controller
      */
     public function destroy(Peminjaman $peminjaman)
     {
-        // Return alat to available status
-        $alat = $peminjaman->alat;
-        if ($alat) {
-            $alat->update(['status' => 'tersedia']);
+        // Return buku to available status
+        $buku = $peminjaman->buku;
+        if ($buku) {
+            $buku->update(['status' => 'tersedia']);
         }
 
         $peminjaman->delete();

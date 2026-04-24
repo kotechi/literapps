@@ -21,7 +21,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'username',
+        'username',
         'password',
         'role',
     ];
@@ -80,18 +81,34 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is regular user
+     * Check if user is siswa
      */
-    public function isPetugas(): bool
+    public function isSiswa(): bool
     {
-        return $this->hasRole('petugas');
+        return $this->hasRole('siswa');
     }
 
     /**
-     * Check if user is peminjam
+     * Backward compatibility for older role checks.
      */
     public function isPeminjam(): bool
     {
-        return $this->hasRole('peminjam');
+        return $this->isSiswa();
+    }
+
+    /**
+     * Backward compatibility for removed role.
+     */
+    public function isPetugas(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get anggota profile for this user.
+     */
+    public function anggota()
+    {
+        return $this->hasOne(Anggota::class, 'id_user');
     }
 }

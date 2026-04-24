@@ -18,7 +18,7 @@
 
                 <div class="space-y-6">
                     <div>
-                        @if(auth()->user()->isAdmin() or auth()->user()->isPetugas())
+                        @if(auth()->user()->isAdmin())
                         <label for="id_user" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">User</label>
                         <select name="id_user" id="id_user"
                                 class="block w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -37,28 +37,38 @@
                     @endif
 
                     <div>
-                        <label for="id_alat" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Alat</label>
-                        <select name="id_alat" id="id_alat"
+                        <label for="id_buku" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">buku</label>
+                        <select name="id_buku" id="id_buku"
                                 class="block w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                 required>
-                            <option value="">Pilih Alat</option>
-                            @foreach($alat as $item)
-                                <option value="{{ $item->id }}" {{ old('id_alat') == $item->id ? 'selected' : '' }}>
-                                    {{ $item->nama_alat }} ({{ $item->kategori->nama_kategori }}) - {{ ucfirst($item->status) }}
+                            <option value="">Pilih buku</option>
+                            @foreach($buku as $item)
+                                <option value="{{ $item->id }}" {{ old('id_buku') == $item->id ? 'selected' : '' }}>
+                                    {{ $item->nama_buku }} ({{ $item->kategori->nama_kategori }}) - {{ ucfirst($item->status) }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('id_alat')
+                        @error('id_buku')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="tanggal_pengembalian" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tanggal Pengembalian</label>
-                        <input type="date" name="tanggal_pengembalian" id="tanggal_pengembalian" value="{{ old('tanggal_pengembalian') }}"
+                        <label for="tgl_pinjam" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tanggal Pinjam</label>
+                        <input type="date" name="tgl_pinjam" id="tgl_pinjam" value="{{ old('tgl_pinjam', date('Y-m-d')) }}"
+                               class="block w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                               required>
+                        @error('tgl_pinjam')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="tgl_pengembalian" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tanggal Pengembalian</label>
+                        <input type="date" name="tgl_pengembalian" id="tgl_pengembalian" value="{{ old('tgl_pengembalian') }}"
                                class="block w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                required min="{{ date('Y-m-d', strtotime('+1 day')) }}">
-                        @error('tanggal_pengembalian')
+                        @error('tgl_pengembalian')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

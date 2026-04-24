@@ -6,9 +6,9 @@
                 <div class="text-white">
                     <h1 class="text-3xl font-bold mb-1">Daftar Kategori</h1>
                     @if(auth()->user()->isAdmin())
-                    <p class="text-purple-100">Kelola kategori alat</p>
+                    <p class="text-purple-100">Kelola kategori buku</p>
                     @else
-                    <p class="text-purple-100">Lihat semua kategori alat</p>
+                    <p class="text-purple-100">Lihat semua kategori buku</p>
                     @endif
                 </div>
                 @if(auth()->user()->isAdmin())

@@ -57,20 +57,21 @@
             <div class="absolute top-10 left-10 w-32 h-32 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-60"></div>
             <div class="absolute bottom-10 right-10 w-40 h-40 bg-blue-200 dark:bg-blue-900/30 rounded-full blur-3xl opacity-60"></div>
             
-            <div class="flex w-full max-w-md flex-col gap-6 relative z-10">
+            @php($isRegisterPage = request()->routeIs('register'))
+            <div class="flex w-full max-w-md {{ $isRegisterPage ? 'sm:max-w-2xl md:max-w-4xl' : '' }} flex-col gap-6 relative z-10">
                 <!-- Logo and Brand -->
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-3 mb-2" wire:navigate>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl hover-lift border border-gray-200 dark:border-gray-700">
                         <img src="/logo.svg" alt="{{ config('app.name', 'Laravel') }}" class="w-16 h-16">
                     </div>
                     <div class="text-center">
-                        <h1 class="text-2xl font-bold gradient-text">Sistem</h1>
-                        <p class="text-xl font-bold text-gray-800 dark:text-white">Peminjaman Alat</p>
+                        <h1 class="text-2xl font-bold gradient-text">Literapp</h1>
+                        <p class="text-xl font-bold text-gray-800 dark:text-white">Peminjaman buku</p>
                     </div>
                 </a>
                 
                 <!-- Auth Card -->
-                <div class="auth-card rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+                <div class="auth-card rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 {{ $isRegisterPage ? 'p-6 md:p-10' : 'p-8' }}">
                     {{ $slot }}
                 </div>
                 

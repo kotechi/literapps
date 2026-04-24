@@ -17,7 +17,7 @@ class DendaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
      */
     public function collection()
     {
-        return Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.alat', 'user'])->get();
+        return Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.buku', 'user'])->get();
     }
 
     /**
@@ -28,7 +28,7 @@ class DendaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         return [
             'No',
             'Nama Peminjam',
-            'Nama Alat',
+            'Nama buku',
             'Kategori Denda',
             'Total Denda',
             'Petugas',
@@ -48,7 +48,7 @@ class DendaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         return [
             $no,
             $row->pengembalian->peminjaman->user->name,
-            $row->pengembalian->peminjaman->alat->nama_alat,
+            $row->pengembalian->peminjaman->buku->nama_buku,
             $row->nama_kategori,
             'Rp ' . number_format($row->total_denda, 0, ',', '.'),
             $row->user->name,

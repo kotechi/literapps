@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\DendaExport;
 use App\Exports\LaporanKeseluruhanExport;
-use App\Exports\PaymentExport;
 use App\Exports\PeminjamanExport;
 use App\Exports\PengembalianExport;
 use Illuminate\Http\Request;
@@ -34,21 +32,5 @@ class LaporanController extends Controller
     public function downloadPengembalian()
     {
         return Excel::download(new PengembalianExport, 'laporan-pengembalian-' . date('Y-m-d') . '.xlsx');
-    }
-
-    /**
-     * Download laporan denda
-     */
-    public function downloadDenda()
-    {
-        return Excel::download(new DendaExport, 'laporan-denda-' . date('Y-m-d') . '.xlsx');
-    }
-
-    /**
-     * Download laporan pembayaran
-     */
-    public function downloadPayment()
-    {
-        return Excel::download(new PaymentExport, 'laporan-pembayaran-' . date('Y-m-d') . '.xlsx');
     }
 }

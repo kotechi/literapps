@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Sistem Peminjaman Alat</title>
+        <title>Literapps - Sistem Peminjaman Buku</title>
 
         <link rel="icon" href="/logo.svg" type="image/svg+xml">
 
@@ -49,7 +49,7 @@
             }
         </style>
     </head>
-    <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen flex items-center justify-center p-4">
+    <body class="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen flex items-center justify-center p-4">
         <!-- Navigation -->
         {{-- @if (Route::has('login'))
             <div class="absolute top-0 right-0 p-6 sm:p-8">
@@ -83,14 +83,14 @@
                             <img src="/logo.svg" alt="Logo" class="w-16 h-16">
                         </div>
                         <div>
-                            <h2 class="text-2xl font-bold gradient-text">Sistem</h2>
-                            <h1 class="text-4xl font-bold text-gray-800 dark:text-white">Peminjaman Alat</h1>
+                            <h2 class="text-2xl font-bold gradient-text">Literapps</h2>
+                            <h1 class="text-4xl font-bold text-gray-800 dark:text-white">Peminjaman Buku</h1>
                         </div>
                     </div>
 
                     <!-- Description -->
                     <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                        Kelola peminjaman dan pengembalian alat dengan mudah, cepat, dan efisien. 
+                        Kelola peminjaman dan pengembalian buku dengan mudah, cepat, dan efisien. 
                         Sistem modern untuk manajemen inventaris yang lebih baik.
                     </p>
 
@@ -153,25 +153,35 @@
                         </div>
                     </div>
 
-                    <!-- CTA Button -->
+                    <!-- CTA Buttons -->
                     @if (Route::has('login'))
                             <div class="pt-6">
-                                @auth
-                                <a
-                                    href="{{ route('dashboard') }}"
-                                    class="inline-flex items-center gap-2 px-8 py-4 gradient-bg text-white rounded-xl font-bold text-lg shadow-2xl hover-lift"
-                                >
-                                @else
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="inline-flex items-center gap-2 px-8 py-4 gradient-bg text-white rounded-xl font-bold text-lg shadow-2xl hover-lift"
-                                >
-                                @endauth
-                                    <span>Mulai Sekarang</span>
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                    </svg>
-                                </a>
+                                <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                                    @auth
+                                        <a
+                                            href="{{ route('dashboard') }}"
+                                            class="inline-flex items-center gap-2 px-8 py-4 gradient-bg text-white rounded-xl font-bold text-lg shadow-2xl hover-lift"
+                                        >
+                                            <span>Masuk Dashboard</span>
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                            </svg>
+                                        </a>
+                                    @else
+                                        <a
+                                            href="{{ route('login.siswa') }}"
+                                            class="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-2xl hover-lift"
+                                        >
+                                            <span>Login Siswa</span>
+                                        </a>
+                                        <a
+                                            href="{{ route('login.admin') }}"
+                                            class="inline-flex items-center gap-2 px-8 py-4 bg-slate-800 text-white rounded-xl font-bold text-lg shadow-2xl hover-lift"
+                                        >
+                                            <span>Login Admin</span>
+                                        </a>
+                                    @endauth
+                                </div>
                             </div>
                     @endif
                 </div>
@@ -183,7 +193,7 @@
                         <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 hover-lift border border-gray-100 dark:border-gray-700">
                             <!-- Logo Large -->
                             <div class="flex justify-center mb-8 animate-float">
-                                <div class="bg-gradient-to-br from-purple-500 to-blue-600 p-8 rounded-3xl shadow-2xl">
+                                <div class="bg-linear-to-br from-purple-500 to-blue-600 p-8 rounded-3xl shadow-2xl">
                                     <img src="/logo.svg" alt="Logo" class="w-32 h-32 brightness-0 invert">
                                 </div>
                             </div>
@@ -199,7 +209,7 @@
                                         </div>
                                         <span class="font-medium text-gray-700 dark:text-gray-300">Peminjaman Aktif</span>
                                     </div>
-                                    <span class="font-bold text-xl gradient-text">24</span>
+                                    <span class="font-bold text-xl gradient-text">{{ $peminjaman->count() }}</span>
                                 </div>
 
                                 <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
@@ -209,9 +219,9 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                                             </svg>
                                         </div>
-                                        <span class="font-medium text-gray-700 dark:text-gray-300">Total Alat</span>
+                                        <span class="font-medium text-gray-700 dark:text-gray-300">Total Buku</span>
                                     </div>
-                                    <span class="font-bold text-xl gradient-text">156</span>
+                                    <span class="font-bold text-xl gradient-text">{{ $buku }}</span>
                                 </div>
 
                                 <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
@@ -221,9 +231,9 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                             </svg>
                                         </div>
-                                        <span class="font-medium text-gray-700 dark:text-gray-300">Pengguna</span>
+                                        <span class="font-medium text-gray-700 dark:text-gray-300">Anggota</span>
                                     </div>
-                                    <span class="font-bold text-xl gradient-text">48</span>
+                                    <span class="font-bold text-xl gradient-text">{{ $anggota }}</span>
                                 </div>
                             </div>
                         </div>

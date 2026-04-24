@@ -2,12 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [\App\Http\Controllers\WelcomeController::class, 'welcome'])->name('home');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login/admin', function () {
+        return redirect()->route('login', ['role' => 'admin']);
+    })->name('login.admin');
+
+    Route::get('/login/siswa', function () {
+        return redirect()->route('login', ['role' => 'siswa']);
+    })->name('login.siswa');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('anggota', [\App\Http\Controllers\AnggotaController::class, 'index'])->name('anggota.index');
     
     Route::prefix('users')->group(function () {
         Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
@@ -17,14 +26,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/{user}', [\App\Http\Controllers\UserController::class, 'update'])->name('users.update');
         Route::delete('/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
     });
-    Route::prefix('alat')->group(function () {
-        Route::get('/', [\App\Http\Controllers\AlatController::class, 'index'])->name('alat.index');
-        Route::get('/create', [\App\Http\Controllers\AlatController::class, 'create'])->name('alat.create');
-        Route::post('/', [\App\Http\Controllers\AlatController::class, 'store'])->name('alat.store');
-        Route::get('/{alat}/edit', [\App\Http\Controllers\AlatController::class, 'edit'])->name('alat.edit');
-        Route::put('/{alat}', [\App\Http\Controllers\AlatController::class, 'update'])->name('alat.update');
-        Route::delete('/{alat}', [\App\Http\Controllers\AlatController::class, 'destroy'])->name('alat.destroy');
-        Route::get('search', [\App\Http\Controllers\AlatController::class, 'search'])->name('alat.search');
+    Route::prefix('buku')->group(function () {
+        Route::get('/', [\App\Http\Controllers\bukuController::class, 'index'])->name('buku.index');
+        Route::get('/create', [\App\Http\Controllers\bukuController::class, 'create'])->name('buku.create');
+        Route::post('/', [\App\Http\Controllers\bukuController::class, 'store'])->name('buku.store');
+        Route::get('/{buku}/edit', [\App\Http\Controllers\bukuController::class, 'edit'])->name('buku.edit');
+        Route::put('/{buku}', [\App\Http\Controllers\bukuController::class, 'update'])->name('buku.update');
+        Route::delete('/{buku}', [\App\Http\Controllers\bukuController::class, 'destroy'])->name('buku.destroy');
+        Route::get('search', [\App\Http\Controllers\bukuController::class, 'search'])->name('buku.search');
     });
     Route::prefix('kategori')->group(function () {
         Route::get('/', [\App\Http\Controllers\KategoriController::class, 'index'])->name('kategori.index');
@@ -53,24 +62,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/{pengembalian}', [\App\Http\Controllers\PengembalianController::class, 'update'])->name('pengembalian.update');
         Route::put('/{pengembalian}/confirm', [\App\Http\Controllers\PengembalianController::class, 'confirm'])->name('pengembalian.confirm');
     });
-    Route::prefix('denda')->group(function () {
-        Route::get('/', [\App\Http\Controllers\DendaController::class, 'index'])->name('denda.index');
-        Route::get('/create', [\App\Http\Controllers\DendaController::class, 'create'])->name('denda.create');
-        Route::post('/', [\App\Http\Controllers\DendaController::class, 'store'])->name('denda.store');
-        Route::get('/{denda}/edit', [\App\Http\Controllers\DendaController::class, 'edit'])->name('denda.edit');
-        Route::put('/{denda}', [\App\Http\Controllers\DendaController::class, 'update'])->name('denda.update');
-        Route::delete('/{denda}', [\App\Http\Controllers\DendaController::class, 'destroy'])->name('denda.destroy');
-    });
-    Route::prefix('payment')->group(function () {
-        Route::get('/', [\App\Http\Controllers\PaymentController::class, 'index'])->name('payment.index');
-        Route::get('/create', [\App\Http\Controllers\PaymentController::class, 'create'])->name('payment.create');
-        Route::post('/', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.store');
-        Route::get('/{payment}/edit', [\App\Http\Controllers\PaymentController::class, 'edit'])->name('payment.edit');
-        Route::put('/{payment}', [\App\Http\Controllers\PaymentController::class, 'update'])->name('payment.update');
-        Route::delete('/{payment}', [\App\Http\Controllers\PaymentController::class, 'destroy'])->name('payment.destroy');
-        Route::put('/{payment}/confirm', [\App\Http\Controllers\PaymentController::class, 'confirm'])->name('payment.confirm');
-
-    });
     Route::prefix('log-aktivitas')->group(function () {
         Route::get('/', [\App\Http\Controllers\LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
         Route::get('/{log_aktivitas}/edit', [\App\Http\Controllers\LogAktivitasController::class, 'edit'])->name('log-aktivitas.edit');
@@ -78,13 +69,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{log_aktivitas}', [\App\Http\Controllers\LogAktivitasController::class, 'destroy'])->name('log-aktivitas.destroy');
     });
 
-    // Routes Laporan (untuk Petugas dan Admin)
+    // Routes Laporan
     Route::prefix('laporan')->group(function () {
         Route::get('/keseluruhan', [\App\Http\Controllers\LaporanController::class, 'downloadKeseluruhan'])->name('laporan.keseluruhan');
         Route::get('/peminjaman', [\App\Http\Controllers\LaporanController::class, 'downloadPeminjaman'])->name('laporan.peminjaman');
         Route::get('/pengembalian', [\App\Http\Controllers\LaporanController::class, 'downloadPengembalian'])->name('laporan.pengembalian');
-        Route::get('/denda', [\App\Http\Controllers\LaporanController::class, 'downloadDenda'])->name('laporan.denda');
-        Route::get('/payment', [\App\Http\Controllers\LaporanController::class, 'downloadPayment'])->name('laporan.payment');
     });
 });
 // Route::view('dashboard', 'dashboard')

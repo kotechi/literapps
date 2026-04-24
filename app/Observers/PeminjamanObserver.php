@@ -12,7 +12,7 @@ class PeminjamanObserver
         LogAktivitas::create([
             'id_user' => auth()->id() ?? $peminjaman->id_user,
             'jenis_aktivitas' => 'peminjaman',
-            'deskripsi' => 'Mengajukan peminjaman alat: ' . $peminjaman->alat?->nama_alat ?? 'ID: ' . $peminjaman->id_alat,
+            'deskripsi' => 'Mengajukan peminjaman buku: ' . $peminjaman->buku?->nama_buku ?? 'ID: ' . $peminjaman->id_buku,
             'tanggal_aktivitas' => now(),
         ]);
     }
@@ -28,9 +28,9 @@ class PeminjamanObserver
             $deskripsi = "Status peminjaman diubah dari '{$statusLama}' menjadi '{$statusBaru}'";
             
             if ($statusBaru === 'approved') {
-                $deskripsi = 'Menyetujui peminjaman alat: ' . $peminjaman->alat?->nama_alat ?? 'ID: ' . $peminjaman->id_alat;
+                $deskripsi = 'Menyetujui peminjaman buku: ' . $peminjaman->buku?->nama_buku ?? 'ID: ' . $peminjaman->id_buku;
             } elseif ($statusBaru === 'rejected') {
-                $deskripsi = 'Menolak peminjaman alat: ' . $peminjaman->alat?->nama_alat ?? 'ID: ' . $peminjaman->id_alat;
+                $deskripsi = 'Menolak peminjaman buku: ' . $peminjaman->buku?->nama_buku ?? 'ID: ' . $peminjaman->id_buku;
             }
             
             LogAktivitas::create([
@@ -54,7 +54,7 @@ class PeminjamanObserver
         LogAktivitas::create([
             'id_user' => auth()->id() ?? $peminjaman->id_user,
             'jenis_aktivitas' => 'peminjaman',
-            'deskripsi' => 'Menghapus peminjaman alat: ' . $peminjaman->alat?->nama_alat ?? 'ID: ' . $peminjaman->id_alat,
+            'deskripsi' => 'Menghapus peminjaman buku: ' . $peminjaman->buku?->nama_buku ?? 'ID: ' . $peminjaman->id_buku,
             'tanggal_aktivitas' => now(),
         ]);
     }

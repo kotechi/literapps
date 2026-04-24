@@ -5,9 +5,9 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold mb-2">Selamat datang, {{ auth()->user()->name }}!</h1>
-                    <p class="text-purple-100">Kelola sistem peminjaman alat dengan mudah dan efisien</p>
+                    <p class="text-purple-100">Kelola sistem peminjaman buku dengan mudah dan efisien</p>
                 </div>
-                @if(auth()->user()->isPetugas())
+                @if(auth()->user()->isAdmin())
                 <a href="{{ route('laporan.keseluruhan') }}" class="bg-white text-purple-600 hover:bg-purple-50 px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -72,10 +72,10 @@
             <div class="flex flex-col gap-5">
                 <div>
                     <h2 class="text-xl font-bold text-gray-900">Statistik 6 Bulan Terakhir</h2>
-                    <p class="text-sm text-gray-500">Peminjaman, pengembalian, dan total denda</p>
+                    <p class="text-sm text-gray-500">Peminjaman dan pengembalian</p>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-3">
+                <div class="grid gap-4 md:grid-cols-2">
                     <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
                         <p class="text-sm font-medium text-blue-700">Total Peminjaman</p>
                         <p class="mt-1 text-2xl font-bold text-blue-900">{{ number_format($adminChartSummary['peminjaman']) }}</p>
@@ -83,10 +83,6 @@
                     <div class="rounded-lg border border-green-200 bg-green-50 p-4">
                         <p class="text-sm font-medium text-green-700">Total Pengembalian</p>
                         <p class="mt-1 text-2xl font-bold text-green-900">{{ number_format($adminChartSummary['pengembalian']) }}</p>
-                    </div>
-                    <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                        <p class="text-sm font-medium text-amber-700">Total Denda</p>
-                        <p class="mt-1 text-2xl font-bold text-amber-900">{{ number_format($adminChartSummary['total_denda']) }}</p>
                     </div>
                 </div>
 
@@ -122,7 +118,6 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         @if($log->jenis_aktivitas == 'peminjaman') bg-blue-100 text-blue-800
                                         @elseif($log->jenis_aktivitas == 'pengembalian') bg-green-100 text-green-800
-                                        @elseif($log->jenis_aktivitas == 'denda') bg-red-100 text-red-800
                                         @else bg-gray-100 text-gray-800
                                         @endif">
                                         {{ ucfirst($log->jenis_aktivitas) }}
@@ -151,7 +146,6 @@
             const labels = @json($chartLabels);
             const dataPeminjaman = @json($chartPeminjaman);
             const dataPengembalian = @json($chartPengembalian);
-            const dataTotalDenda = @json($chartTotalDenda);
 
             const initAdminStatsChart = () => {
                 const adminStatsCanvas = document.getElementById('adminStatsChart');
@@ -184,15 +178,6 @@
                                 data: dataPengembalian,
                                 borderColor: '#059669',
                                 backgroundColor: 'rgba(5, 150, 105, 0.15)',
-                                tension: 0.35,
-                                fill: true,
-                                yAxisID: 'y',
-                            },
-                            {
-                                label: 'Total Denda',
-                                data: dataTotalDenda,
-                                borderColor: '#d97706',
-                                backgroundColor: 'rgba(217, 119, 6, 0.15)',
                                 tension: 0.35,
                                 fill: true,
                                 yAxisID: 'y',

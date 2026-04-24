@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Alat extends Model
+class Buku extends Model
 {
     use HasFactory;
 
-    protected $table = 'alat';
+    protected $table = 'buku';
 
     protected $fillable = [
         'id_kategori',
-        'nama_alat',
+        'nama_buku',
+        'deskripsi',
         'status',
     ];
 
@@ -22,7 +23,7 @@ class Alat extends Model
     ];
 
     /**
-     * Get the kategori that owns the alat.
+     * Get the kategori that owns the buku.
      */
     public function kategori()
     {
@@ -30,10 +31,10 @@ class Alat extends Model
     }
 
     /**
-     * Get the peminjaman for the alat.
+     * Get the peminjaman for the buku.
      */
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class, 'id_alat');
+        return $this->hasMany(Peminjaman::class, 'id_buku');
     }
 }

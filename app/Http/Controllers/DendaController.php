@@ -15,7 +15,7 @@ class DendaController extends Controller
     public function index()
     {
         if(auth()->user()->isPeminjam()) {
-            $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.alat', 'user'])
+            $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.buku', 'user'])
                 ->whereHas('pengembalian.peminjaman', function($q) {
                     $q->where('id_user', auth()->id());
                 })
@@ -33,7 +33,7 @@ class DendaController extends Controller
                 $q->where('id_user', auth()->id());
             })->where('status', 'selesai')->count();
         } else {
-            $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.alat', 'user'])
+            $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.buku', 'user'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
@@ -51,7 +51,7 @@ class DendaController extends Controller
      */
     public function create()
     {
-        $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.alat.kategori'])
+        $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori'])
             ->where('status', 'disetujui')
             ->whereDoesntHave('denda')
             ->orderBy('created_at', 'desc')
@@ -102,7 +102,7 @@ class DendaController extends Controller
      */
     public function edit(Denda $denda)
     {
-        $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.alat.kategori'])->get();
+        $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori'])->get();
         $users = User::orderBy('name')->get();
 
         return view('denda.edit', compact('denda', 'pengembalian', 'users'));

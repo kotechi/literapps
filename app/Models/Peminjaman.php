@@ -13,14 +13,16 @@ class Peminjaman extends Model
 
     protected $fillable = [
         'id_user',
-        'id_alat',
-        'tanggal_pengembalian',
+        'id_buku',
+        'tgl_pinjam',
+        'tgl_pengembalian',
         'deskripsi',
         'status',
     ];
 
     protected $casts = [
-        'tanggal_pengembalian' => 'date',
+        'tgl_pinjam' => 'date',
+        'tgl_pengembalian' => 'date',
         'status' => 'string',
     ];
 
@@ -33,11 +35,11 @@ class Peminjaman extends Model
     }
 
     /**
-     * Get the alat that owns the peminjaman.
+     * Get the buku that owns the peminjaman.
      */
-    public function alat()
+    public function buku()
     {
-        return $this->belongsTo(Alat::class, 'id_alat');
+        return $this->belongsTo(buku::class, 'id_buku');
     }
 
     /**

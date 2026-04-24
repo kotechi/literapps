@@ -14,8 +14,6 @@ class LaporanKeseluruhanExport implements WithMultipleSheets
         return [
             new PeminjamanExport(),
             new PengembalianExport(),
-            new DendaExport(),
-            new PaymentExport(),
         ];
     }
 }

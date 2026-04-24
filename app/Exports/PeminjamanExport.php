@@ -17,7 +17,7 @@ class PeminjamanExport implements FromCollection, WithHeadings, WithMapping, Wit
      */
     public function collection()
     {
-        return Peminjaman::with(['user', 'alat.kategori'])->get();
+        return Peminjaman::with(['user', 'buku.kategori'])->get();
     }
 
     /**
@@ -28,7 +28,7 @@ class PeminjamanExport implements FromCollection, WithHeadings, WithMapping, Wit
         return [
             'No',
             'Nama User',
-            'Nama Alat',
+            'Nama buku',
             'Kategori',
             'Tanggal Pinjam',
             'Tanggal Pengembalian',
@@ -48,10 +48,10 @@ class PeminjamanExport implements FromCollection, WithHeadings, WithMapping, Wit
         return [
             $no,
             $row->user->name,
-            $row->alat->nama_alat,
-            $row->alat->kategori->nama_kategori,
+            $row->buku->nama_buku,
+            $row->buku->kategori->nama_kategori,
             $row->created_at->format('d/m/Y'),
-            $row->tanggal_pengembalian->format('d/m/Y'),
+            $row->tgl_pengembalian->format('d/m/Y'),
             ucfirst($row->status),
         ];
     }

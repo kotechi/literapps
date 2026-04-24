@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Alat;
+use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 
@@ -13,8 +13,8 @@ class AlatController extends Controller
      */
     public function index()
     {
-        $alat = Alat::with('kategori')->paginate(15);
-        return view('alat.index', compact('alat'));
+        $buku = Buku::with('kategori')->paginate(15);
+        return view('buku.index', compact('buku'));
     }
 
     /**
@@ -23,7 +23,7 @@ class AlatController extends Controller
     public function create()
     {
         $kategori = Kategori::orderBy('nama_kategori')->get();
-        return view('alat.create', compact('kategori'));
+        return view('buku.create', compact('kategori'));
     }
 
     /**
@@ -33,15 +33,15 @@ class AlatController extends Controller
     {
         $validated = $request->validate([
             'id_kategori' => 'required|exists:kategori,id',
-            'nama_alat' => 'required|string|max:255',
+            'nama_buku' => 'required|string|max:255',
             'status' => 'required|in:tersedia,tidak_tersedia',
         ]);
 
-        Alat::create($validated);
+        Buku::create($validated);
 
         return redirect()
-            ->route('alat.index')
-            ->with('success', 'Alat berhasil ditambahkan.');
+            ->route('buku.index')
+            ->with('success', 'buku berhasil ditambahkan.');
     }
 
     /**
@@ -55,55 +55,55 @@ class AlatController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Alat $alat)
+    public function edit(Buku $buku)
     {
         $kategori = Kategori::orderBy('nama_kategori')->get();
-        return view('alat.edit', compact('alat', 'kategori'));
+        return view('buku.edit', compact('buku', 'kategori'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Alat $alat)
+    public function update(Request $request, Buku $buku)
     {
         $validated = $request->validate([
             'id_kategori' => 'required|exists:kategori,id',
-            'nama_alat' => 'required|string|max:255',
+            'nama_buku' => 'required|string|max:255',
             'status' => 'required|in:tersedia,tidak_tersedia',
         ]);
 
-        $alat->update($validated);
+        $buku->update($validated);
 
         return redirect()
-            ->route('alat.index')
-            ->with('success', 'Alat berhasil diperbarui.');
+            ->route('buku.index')
+            ->with('success', 'buku berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Alat $alat)
+    public function destroy(Buku $buku)
     {
-        $alat->delete();
+        $buku->delete();
 
         return redirect()
-            ->route('alat.index')
-            ->with('success', 'Alat berhasil dihapus.');
+            ->route('buku.index')
+            ->with('success', 'buku berhasil dihapus.');
     }
 
     /**
-     * Search for alat.
+     * Search for buku.
      */
     public function search(Request $request)
     {
         $query = $request->get('q');
-        $alat = Alat::with('kategori')
-            ->where('nama_alat', 'like', '%' . $query . '%')
+        $buku = Buku::with('kategori')
+            ->where('nama_buku', 'like', '%' . $query . '%')
             ->orWhereHas('kategori', function ($q) use ($query) {
                 $q->where('nama_kategori', 'like', '%' . $query . '%');
             })
             ->paginate(15);
 
-        return view('alat.index', compact('alat', 'query'));
+        return view('buku.index', compact('buku', 'query'));
     }
 }

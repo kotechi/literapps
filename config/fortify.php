@@ -32,22 +32,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Username / Email
+    | Username / Username
     |--------------------------------------------------------------------------
     |
     | This value defines which model attribute should be considered as your
-    | application's "username" field. Typically, this might be the email
+    | application's "username" field. Typically, this might be the username
     | address of the users but you are free to change this value here.
     |
     | Out of the box, Fortify expects forgot password and reset password
-    | requests to have a field named 'email'. If the application uses
+    | requests to have a field named 'username'. If the application uses
     | another name for the field you may define it below as needed.
     |
     */
 
-    'username' => 'email',
+    'username' => 'username',
 
-    'email' => 'email',
+    'username' => 'username',
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | By default, Fortify will throttle logins to five requests per minute for
-    | every email and IP address combination. However, if you would like to
+    | every username and IP address combination. However, if you would like to
     | specify a custom rate limiter to call then you may specify it here.
     |
     */

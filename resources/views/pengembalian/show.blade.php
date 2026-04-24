@@ -40,7 +40,7 @@
                     <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                         <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Peminjaman</p>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $pengembalian->peminjaman->user->name }}</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $pengembalian->peminjaman->alat->nama_alat }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $pengembalian->peminjaman->buku->nama_buku }}</p>
                     </div>
                     <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                         <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Dikembalikan Oleh</p>
@@ -59,8 +59,8 @@
                 <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Detail Peminjaman</p>
                     <div class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
-                        <p><span class="font-medium">Kategori:</span> {{ $pengembalian->peminjaman->alat->kategori->nama_kategori }}</p>
-                        <p><span class="font-medium">Tanggal Pengembalian:</span> {{ $pengembalian->peminjaman->tanggal_pengembalian->format('d M Y') }}</p>
+                        <p><span class="font-medium">Kategori:</span> {{ $pengembalian->peminjaman->buku->kategori->nama_kategori }}</p>
+                        <p><span class="font-medium">Tanggal Pengembalian:</span> {{ $pengembalian->peminjaman->tgl_pengembalian->format('d M Y') }}</p>
                         <p><span class="font-medium">Deskripsi:</span> {{ $pengembalian->peminjaman->deskripsi ?: '-' }}</p>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                         <span class="font-semibold text-gray-900 dark:text-white">#{{ $pengembalian->id }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 dark:text-gray-400">Petugas/User</span>
+                        <span class="text-gray-500 dark:text-gray-400">Pengembalian Oleh</span>
                         <span class="font-semibold text-gray-900 dark:text-white text-right">{{ $pengembalian->user->name }}</span>
                     </div>
                     <div class="flex justify-between text-sm">

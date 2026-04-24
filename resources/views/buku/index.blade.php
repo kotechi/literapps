@@ -1,18 +1,18 @@
-<x-layouts::app :title="'Daftar Alat'">
+<x-layouts::app :title="'Daftar buku'">
     <div class="space-y-6">
         <!-- Page Header -->
         <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 dark:from-indigo-700 dark:via-purple-700 dark:to-purple-800 rounded-xl shadow-lg p-6">
             <div class="flex justify-between items-center">
                 <div class="text-white">
-                    <h1 class="text-3xl font-bold mb-1">Daftar Alat</h1>
-                    <p class="text-purple-100">Lihat dan kelola semua alat</p>
+                    <h1 class="text-3xl font-bold mb-1">Daftar buku</h1>
+                    <p class="text-purple-100">Lihat dan kelola semua buku</p>
                 </div>
                 @if(auth()->user()->isAdmin())
-                <a href="{{ route('alat.create') }}" class="bg-white text-purple-600 hover:bg-purple-50 px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
+                <a href="{{ route('buku.create') }}" class="bg-white text-purple-600 hover:bg-purple-50 px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
-                    Tambah Alat
+                    Tambah buku
                 </a>
                 @endif
             </div>
@@ -31,9 +31,9 @@
 
         <!-- Search Form -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-            <form method="GET" action="{{ route('alat.search') }}" class="flex gap-3">
+            <form method="GET" action="{{ route('buku.search') }}" class="flex gap-3">
                 <div class="flex-1">
-                    <input type="text" name="q" value="{{ $query ?? '' }}" placeholder="Cari alat atau kategori..."
+                    <input type="text" name="q" value="{{ $query ?? '' }}" placeholder="Cari buku atau kategori..."
                            class="w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
                 </div>
                 <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
@@ -43,7 +43,7 @@
                     Cari
                 </button>
                 @if(isset($query))
-                    <a href="{{ route('alat.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
+                    <a href="{{ route('buku.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -59,7 +59,7 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Alat</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama buku</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kategori</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                             @if(auth()->user()->isAdmin() )
@@ -68,10 +68,10 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse($alat as $item)
+                        @forelse($buku as $item)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                    {{ $item->nama_alat }}
+                                    {{ $item->nama_buku }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                                     {{ $item->kategori->nama_kategori }}
@@ -86,13 +86,13 @@
                                 </td>
                                 @if(auth()->user()->isAdmin() )
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                    <a href="{{ route('alat.edit', $item) }}" class="inline-flex items-center px-3 py-1.5 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 rounded-md transition-colors">
+                                    <a href="{{ route('buku.edit', $item) }}" class="inline-flex items-center px-3 py-1.5 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-300 dark:hover:bg-indigo-800 rounded-md transition-colors">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
                                         Edit
                                     </a>
-                                    <form method="POST" action="{{ route('alat.destroy', $item) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus alat ini?')">
+                                    <form method="POST" action="{{ route('buku.destroy', $item) }}" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800 rounded-md transition-colors">
@@ -108,7 +108,7 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                    Tidak ada data alat
+                                    Tidak ada data buku
                                 </td>
                             </tr>
                         @endforelse
@@ -116,7 +116,7 @@
                 </table>
             </div>
             <div class="px-6 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
-                {{ $alat->links() }}
+                {{ $buku->links() }}
             </div>
         </div>
     </div>

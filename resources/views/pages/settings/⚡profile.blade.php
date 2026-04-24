@@ -2,7 +2,7 @@
 
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyUsername;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -13,7 +13,7 @@ new class extends Component {
     use ProfileValidationRules;
 
     public string $name = '';
-    public string $email = '';
+    public string $username = '';
 
     /**
      * Mount the component.
@@ -21,7 +21,7 @@ new class extends Component {
     public function mount(): void
     {
         $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $this->username = Auth::user()->username;
     }
 
     /**
@@ -35,8 +35,8 @@ new class extends Component {
 
         $user->fill($validated);
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+        if ($user->isDirty('username')) {
+            $user->username_verified_at = null;
         }
 
         $user->save();
@@ -45,34 +45,34 @@ new class extends Component {
     }
 
     /**
-     * Send an email verification notification to the current user.
+     * Send an username verification notification to the current user.
      */
     public function resendVerificationNotification(): void
     {
         $user = Auth::user();
 
-        if ($user->hasVerifiedEmail()) {
+        if ($user->hasVerifiedUsername()) {
             $this->redirectIntended(default: route('dashboard', absolute: false));
 
             return;
         }
 
-        $user->sendEmailVerificationNotification();
+        $user->sendUsernameVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
     }
 
     #[Computed]
-    public function hasUnverifiedEmail(): bool
+    public function hasUnverifiedUsername(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+        return Auth::user() instanceof MustVerifyUsername && ! Auth::user()->hasVerifiedUsername();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        return ! Auth::user() instanceof MustVerifyUsername
+            || (Auth::user() instanceof MustVerifyUsername && Auth::user()->hasVerifiedUsername());
     }
 }; ?>
 
@@ -81,26 +81,26 @@ new class extends Component {
 
     <flux:heading class="sr-only">{{ __('Profile Settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and username address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+                <flux:input wire:model="username" :label="__('Username')" type="username" required autocomplete="username" />
 
-                @if ($this->hasUnverifiedEmail)
+                @if ($this->hasUnverifiedUsername)
                     <div>
                         <flux:text class="mt-4">
-                            {{ __('Your email address is unverified.') }}
+                            {{ __('Your username address is unverified.') }}
 
                             <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                                {{ __('Click here to re-send the verification email.') }}
+                                {{ __('Click here to re-send the verification username.') }}
                             </flux:link>
                         </flux:text>
 
                         @if (session('status') === 'verification-link-sent')
                             <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
-                                {{ __('A new verification link has been sent to your email address.') }}
+                                {{ __('A new verification link has been sent to your username address.') }}
                             </flux:text>
                         @endif
                     </div>

@@ -16,10 +16,10 @@ class Kategori extends Model
     ];
 
     /**
-     * Get the alat for the kategori.
+     * Get the buku for the kategori.
      */
-    public function alat()
+    public function buku()
     {
-        return $this->hasMany(Alat::class, 'id_kategori');
+        return $this->hasMany(buku::class, 'id_kategori');
     }
 }

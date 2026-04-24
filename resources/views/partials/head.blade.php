@@ -1,7 +1,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>{{ isset($title) && filled($title) ? $title.' - Sistem Peminjaman Alat' : 'Sistem Peminjaman Alat' }}</title>
+<title>{{ isset($title) && filled($title) ? $title.' - Literapps' : 'Literapps' }}</title>
 
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="shortcut icon" href="/logo.svg" type="image/svg+xml">

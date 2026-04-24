@@ -25,7 +25,7 @@
                             <option value="">Pilih Peminjaman</option>
                             @foreach($peminjaman as $item)
                                 <option value="{{ $item->id }}" {{ old('id_peminjaman') == $item->id ? 'selected' : '' }}>
-                                    {{ $item->user->name }} - {{ $item->alat->nama_alat }} ({{ $item->alat->kategori->nama_kategori }})
+                                    {{ $item->user->name }} - {{ $item->buku->nama_buku }} ({{ $item->buku->kategori->nama_kategori }})
                                 </option>
                             @endforeach
                         </select>
@@ -43,7 +43,7 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    @if(auth()->user()->isAdmin() or auth()->user()->isPetugas())
+                    @if(auth()->user()->isAdmin())
                     <div>
                         <label for="id_user" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">User yang Mengembalikan</label>
                         <select name="id_user" id="id_user"

@@ -12,7 +12,7 @@ class PengembalianObserver
         LogAktivitas::create([
             'id_user' => auth()->id() ?? $pengembalian->id_user,
             'jenis_aktivitas' => 'pengembalian',
-            'deskripsi' => 'Mengembalikan alat dari peminjaman ID: ' . $pengembalian->id_peminjaman,
+            'deskripsi' => 'Mengembalikan buku dari peminjaman ID: ' . $pengembalian->id_peminjaman,
             'tanggal_aktivitas' => now(),
         ]);
     }

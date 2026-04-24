@@ -16,25 +16,17 @@ class UserSeeder extends Seeder
         // user admin
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@gmail.com',
+            'username' => 'adminliterapps',
             'password' => bcrypt('password123'),
             'role' => 'admin'
         ]);
 
-        // user petugas
+        // user siswa
         User::create([
-            'name' => 'Petugas',
-            'email' => 'petugas@gmail.com',
+            'name' => 'Siswa',
+            'username' => 'siswaliterapps',
             'password' => bcrypt('password123'),
-            'role' => 'petugas'
-        ]);
-
-        // user peminjam
-        User::create([
-            'name' => 'Peminjam',
-            'email' => 'peminjam@gmail.com',
-            'password' => bcrypt('password123'),
-            'role' => 'peminjam'
+            'role' => 'siswa'
         ]);
     }
 }

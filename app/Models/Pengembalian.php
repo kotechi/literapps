@@ -42,14 +42,6 @@ class Pengembalian extends Model
     }
 
     /**
-     * Get the denda for the pengembalian.
-     */
-    public function denda()
-    {
-        return $this->hasMany(Denda::class, 'id_pengembalian');
-    }
-
-    /**
      * Get the bukti pengembalian for the pengembalian.
      */
     public function buktiPengembalian()

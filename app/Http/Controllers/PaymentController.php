@@ -15,7 +15,7 @@ class PaymentController extends Controller
     public function index()
     {
         if(auth()->user()->isPeminjam()) {
-            $payment = Payment::with(['denda.pengembalian.peminjaman.user', 'denda.pengembalian.peminjaman.alat'])
+            $payment = Payment::with(['denda.pengembalian.peminjaman.user', 'denda.pengembalian.peminjaman.buku'])
                 ->whereHas('denda.pengembalian.peminjaman', function($q) {
                     $q->where('id_user', auth()->id());
                 })
@@ -33,7 +33,7 @@ class PaymentController extends Controller
                 $q->where('id_user', auth()->id());
             })->where('status', 'menunggu')->count();
         } else {
-            $payment = Payment::with(['denda.pengembalian.peminjaman.user', 'denda.pengembalian.peminjaman.alat'])
+            $payment = Payment::with(['denda.pengembalian.peminjaman.user', 'denda.pengembalian.peminjaman.buku'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
@@ -51,7 +51,7 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.alat'])
+        $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.buku'])
             ->where('status', 'menunggu')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -99,7 +99,7 @@ class PaymentController extends Controller
      */
     public function edit(Payment $payment)
     {
-        $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.alat'])->get();
+        $denda = Denda::with(['pengembalian.peminjaman.user', 'pengembalian.peminjaman.buku'])->get();
 
         return view('payment.edit', compact('payment', 'denda'));
     }

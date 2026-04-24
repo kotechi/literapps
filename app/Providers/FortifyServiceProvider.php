@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Models\LogAktivitas;
+use App\Models\User;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -69,6 +71,26 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $request->validate([
+                'username' => ['required', 'string'],
+                'password' => ['required', 'string'],
+            ]);
+
+            $user = User::where('username', $request->input('username'))->first();
+
+            if (! $user || ! Hash::check($request->input('password'), $user->password)) {
+                return null;
+            }
+
+            $expectedRole = $request->input('expected_role');
+            if (in_array($expectedRole, ['admin', 'siswa'], true) && $user->role !== $expectedRole) {
+                return null;
+            }
+
+            return $user;
+        });
     }
 
     /**
@@ -76,8 +98,17 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn () => view('pages::auth.login'));
-        Fortify::verifyEmailView(fn () => view('pages::auth.verify-email'));
+        Fortify::loginView(function () {
+            $selectedRole = request()->query('role');
+            if (! in_array($selectedRole, ['admin', 'siswa'], true)) {
+                $selectedRole = null;
+            }
+
+            return view('pages::auth.login', [
+                'selectedRole' => $selectedRole,
+            ]);
+        });
+        Fortify::verifyEmailView(fn () => view('pages::auth.verify-username'));
         Fortify::twoFactorChallengeView(fn () => view('pages::auth.two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));
         Fortify::registerView(fn () => view('pages::auth.register'));

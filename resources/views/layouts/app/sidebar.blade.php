@@ -56,10 +56,10 @@
         <flux:sidebar sticky collapsible="mobile" class="modern-sidebar">
             <flux:sidebar.header>
                 <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 p-4">
-                    <img src="/logo.svg" alt="Logo" class="h-7 w-10 rounded-lg  p-1.5" />
+                    <img src="/logo.svg" alt="Logo" class="h-7 w-15 rounded-lg" />
                     <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Panel</p>
-                        <p class="text-sm font-bold leading-tight">Sistem Peminjaman Alat</p>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Literapps</p>
+                        <p class="text-sm font-bold leading-tight">Sistem Peminjaman Buku</p>
                     </div>
                 </a>
                 <flux:sidebar.collapse class="lg:hidden" />
@@ -71,8 +71,8 @@
                     <flux:sidebar.item class="nav-item-modern" icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item class="nav-item-modern" icon="archive-box" :href="route('alat.index')" :current="request()->routeIs('alat.*')" wire:navigate>
-                        {{ __('Alat') }}
+                    <flux:sidebar.item class="nav-item-modern" icon="archive-box" :href="route('buku.index')" :current="request()->routeIs('buku.*')" wire:navigate>
+                        {{ __('Buku') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item class="nav-item-modern" icon="clipboard-document-list" :href="route('peminjaman.index')" :current="request()->routeIs('peminjaman.*')" wire:navigate>
                         {{ __('Peminjaman') }}
@@ -80,15 +80,12 @@
                     <flux:sidebar.item class="nav-item-modern" icon="arrow-path" :href="route('pengembalian.index')" :current="request()->routeIs('pengembalian.*')" wire:navigate>
                         {{ __('Pengembalian') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item class="nav-item-modern" icon="currency-dollar" :href="route('denda.index')" :current="request()->routeIs('denda.*')" wire:navigate>
-                        {{ __('Denda') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item class="nav-item-modern" icon="credit-card" :href="route('payment.index')" :current="request()->routeIs('payment.*')" wire:navigate>
-                        {{ __('Pembayaran') }}
+                    <flux:sidebar.item class="nav-item-modern" icon="identification" :href="route('anggota.index')" :current="request()->routeIs('anggota.*')" wire:navigate>
+                        {{ __('Daftar Anggota') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
-                @if(auth()->user()->isAdmin() || auth()->user()->isPetugas())
+                @if(auth()->user()->isAdmin())
                 <div class="section-title px-2 pb-2 pt-4">Manajemen Tambahan</div>
                 <flux:sidebar.group  class="grid gap-1">
                     @if(auth()->user()->isAdmin())
@@ -138,7 +135,7 @@
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
                                     <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+                                    <flux:text class="truncate">{{ auth()->user()->username }}</flux:text>
                                 </div>
                             </div>
                         </div>

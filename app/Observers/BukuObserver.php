@@ -2,12 +2,12 @@
 
 namespace App\Observers;
 
-use App\Models\buku;
+use App\Models\Buku;
 use App\Models\LogAktivitas;
 
-class bukuObserver
+class BukuObserver
 {
-    public function created(buku $buku): void
+    public function created(Buku $buku): void
     {
         if (auth()->check()) {
             LogAktivitas::create([
@@ -19,7 +19,7 @@ class bukuObserver
         }
     }
 
-    public function updated(buku $buku): void
+    public function updated(Buku $buku): void
     {
         if (auth()->check()) {
             LogAktivitas::create([
@@ -31,7 +31,7 @@ class bukuObserver
         }
     }
 
-    public function deleted(buku $buku): void
+    public function deleted(Buku $buku): void
     {
         if (auth()->check()) {
             LogAktivitas::create([

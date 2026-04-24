@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Pengembalian;
 use App\Models\Peminjaman;
 use App\Models\User;
-use App\Models\Denda;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -16,15 +15,15 @@ class PengembalianController extends Controller
      */
     public function index()
     {
-        if(auth()->user()->isPeminjam()) {
-            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.alat.kategori', 'user'])
+        if(auth()->user()->isSiswa()) {
+            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori', 'user'])
                 ->whereHas('peminjaman', function($q) {
                     $q->where('id_user', auth()->id());
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
-            // Summary untuk peminjam
+            // Summary untuk siswa
             $totalPengembalian = Pengembalian::whereHas('peminjaman', function($q) {
                 $q->where('id_user', auth()->id());
             })->count();
@@ -35,11 +34,11 @@ class PengembalianController extends Controller
                 $q->where('id_user', auth()->id());
             })->where('status', 'menunggu')->count();
         } else {
-            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.alat.kategori', 'user'])
+            $pengembalian = Pengembalian::with(['peminjaman.user', 'peminjaman.buku.kategori', 'user'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
             
-            // Summary untuk petugas/admin
+            // Summary untuk admin
             $totalPengembalian = Pengembalian::count();
             $pengembalianSelesai = Pengembalian::where('status', 'selesai')->count();
             $pengembalianMenunggu = Pengembalian::where('status', 'menunggu')->count();
@@ -53,7 +52,7 @@ class PengembalianController extends Controller
      */
     public function create()
     {
-        $peminjaman = Peminjaman::with(['user', 'alat.kategori'])
+        $peminjaman = Peminjaman::with(['user', 'buku.kategori'])
             ->where('status', 'disetujui')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -76,7 +75,7 @@ class PengembalianController extends Controller
             'bukti_pengembalian.*' => 'file|mimes:jpg,jpeg,png,pdf,webp|max:10240',
         ]);
 
-        if(auth()->user()->isPeminjam()) {
+        if(auth()->user()->isSiswa()) {
             $validated['id_user'] = auth()->id();
         }
 
@@ -88,7 +87,7 @@ class PengembalianController extends Controller
         // }
 
         $peminjaman = Peminjaman::find($validated['id_peminjaman']);
-        $tanggalPengembalian = Carbon::parse($peminjaman->tanggal_pengembalian);
+        $tanggalPengembalian = Carbon::parse($peminjaman->tgl_pengembalian);
         $tanggalKembaliRealisasi = Carbon::parse($validated['tanggal_kembali_realisasi']);
 
         $hariTerlambat = $tanggalPengembalian->diffInDays($tanggalKembaliRealisasi, false);
@@ -121,8 +120,8 @@ class PengembalianController extends Controller
         // Update peminjaman status
         $peminjaman->update(['status' => 'dikembalikan']);
 
-        // Update alat status to tersedia
-        $peminjaman->alat->update(['status' => 'tersedia']);
+        // Update buku status to tersedia
+        $peminjaman->buku->update(['status' => 'tersedia']);
 
         return redirect()
             ->route('pengembalian.index')
@@ -134,9 +133,9 @@ class PengembalianController extends Controller
      */
     public function show(Pengembalian $pengembalian)
     {
-        $pengembalian->load(['peminjaman.user', 'peminjaman.alat.kategori', 'user', 'buktiPengembalian', 'denda']);
+        $pengembalian->load(['peminjaman.user', 'peminjaman.buku.kategori', 'user', 'buktiPengembalian']);
 
-        if (auth()->user()->isPeminjam() && $pengembalian->peminjaman->id_user !== auth()->id()) {
+        if (auth()->user()->isSiswa() && $pengembalian->peminjaman->id_user !== auth()->id()) {
             abort(403);
         }
 
@@ -148,7 +147,7 @@ class PengembalianController extends Controller
      */
     public function edit(Pengembalian $pengembalian)
     {
-        $peminjaman = Peminjaman::with(['user', 'alat.kategori'])->get();
+        $peminjaman = Peminjaman::with(['user', 'buku.kategori'])->get();
         $users = User::orderBy('name')->get();
 
         return view('pengembalian.edit', compact('pengembalian', 'peminjaman', 'users'));
@@ -211,27 +210,15 @@ class PengembalianController extends Controller
         if($validated['status'] === 'selesai') {
             $pengembalian->peminjaman->update(['status' => 'dikembalikan']);
 
-            $pengembalian->peminjaman->alat->update(['status' => 'tersedia']);
+            $pengembalian->peminjaman->buku->update(['status' => 'tersedia']);
         }elseif($validated['status'] === 'disetujui') {
             $pengembalian->peminjaman->update(['status' => 'dikembalikan']);
 
-            $pengembalian->peminjaman->alat->update(['status' => 'tidak_tersedia']);
-            if ($pengembalian->hari_terlambat > 0) {
-
-                Denda::firstOrCreate(
-                    ['id_pengembalian' => $pengembalian->id],
-                    [
-                        'id_user' => $pengembalian->id_user,
-                        'nama_kategori' => $pengembalian->peminjaman->alat->kategori->nama_kategori,
-                        'total_denda' => $pengembalian->hari_terlambat * 5000,
-                        'status' => 'menunggu',
-                    ]
-                );
-            }
+            $pengembalian->peminjaman->buku->update(['status' => 'tidak_tersedia']);
         }elseif($validated['status'] === 'ditolak') {
             $pengembalian->peminjaman->update(['status' => 'disetujui']);
 
-            $pengembalian->peminjaman->alat->update(['status' => 'tidak_tersedia']);
+            $pengembalian->peminjaman->buku->update(['status' => 'tidak_tersedia']);
         }
 
         return redirect()

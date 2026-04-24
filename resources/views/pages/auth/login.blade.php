@@ -3,10 +3,22 @@
         <!-- Header dengan styling yang lebih menarik -->
         <div class="text-center mb-2">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                {{ __('Selamat Datang Kembali') }} 👋
+                @if(($selectedRole ?? null) === 'admin')
+                    {{ __('Login Admin') }}
+                @elseif(($selectedRole ?? null) === 'siswa')
+                    {{ __('Login Siswa') }}
+                @else
+                    {{ __('Selamat Datang Kembali') }}
+                @endif
             </h1>
             <p class="text-sm text-gray-600 dark:text-gray-400">
-                {{ __('Masuk ke akun Anda untuk melanjutkan') }}
+                @if(($selectedRole ?? null) === 'admin')
+                    {{ __('Masuk sebagai admin Literapps') }}
+                @elseif(($selectedRole ?? null) === 'siswa')
+                    {{ __('Masuk sebagai siswa Literapps') }}
+                @else
+                    {{ __('Masuk ke akun Anda untuk melanjutkan') }}
+                @endif
             </p>
         </div>
 
@@ -16,17 +28,21 @@
         <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-5">
             @csrf
 
-            <!-- Email Address dengan styling lebih baik -->
+            @if(($selectedRole ?? null) === 'admin' || ($selectedRole ?? null) === 'siswa')
+                <input type="hidden" name="expected_role" value="{{ $selectedRole }}">
+            @endif
+
+            <!-- Username dengan styling lebih baik -->
             <div>
                 <flux:input
-                    name="email"
-                    :label="__('Alamat Email')"
-                    :value="old('email')"
-                    type="email"
+                    name="username"
+                    :label="__('Username')"
+                    :value="old('username')"
+                    type="text"
                     required
                     autofocus
-                    autocomplete="email"
-                    placeholder="nama@example.com"
+                    autocomplete="username"
+                    placeholder="Masukkan username"
                     class="w-full"
                 />
             </div>
@@ -58,15 +74,15 @@
                     name="remember" 
                     :label="__('Ingat saya')" 
                     :checked="old('remember')"
-                    class="text-purple-600 focus:ring-purple-500"
+                    class="text-slate-700 focus:ring-slate-500"
                 />
             </div>
 
-            <!-- Login Button dengan gradient -->
+            <!-- Login Button dengan warna netral -->
             <div class="flex items-center justify-end pt-2">
                 <button 
                     type="submit" 
-                    class="w-full px-6 py-3.5 text-white font-bold rounded-xl text-sm shadow-2xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 gradient-bg"
+                    class="w-full px-6 py-3.5 text-white font-bold rounded-xl text-sm bg-slate-800 shadow-lg transition-all duration-200 hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/70"
                     data-test="login-button"
                 >
                     <span class="flex items-center justify-center gap-2">
@@ -79,21 +95,20 @@
             </div>
         </form>
         
-        {{-- Uncomment jika fitur register diperlukan --}}
-        {{-- @if (Route::has('register'))
+        @if (($selectedRole ?? null) === 'siswa' && Route::has('register'))
             <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div class="text-center text-sm">
-                    <span class="text-gray-600 dark:text-gray-400">{{ __('Belum punya akun?') }}</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ __('Belum terdaftar sebagai anggota?') }}</span>
                     <flux:link 
-                        :href="route('register')" 
+                        :href="route('register', ['role' => 'siswa'])" 
                         wire:navigate
-                        class="ml-1 font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+                        class="ml-1 font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                        {{ __('Daftar sekarang') }}
+                        {{ __('Daftar Anggota Siswa') }}
                     </flux:link>
                 </div>
             </div>
-        @endif --}}
+        @endif
         
         <!-- Info tambahan -->
         <div class="mt-4 text-center">

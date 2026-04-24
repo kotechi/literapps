@@ -5,15 +5,15 @@
             <div class="flex justify-between items-center">
                 <div class="text-white">
                     <h1 class="text-3xl font-bold mb-1">Daftar Peminjaman</h1>
-                    @if(auth()->user()->isAdmin() || auth()->user()->isPetugas())
-                        <p class="text-purple-100">Kelola peminjaman alat</p>
+                    @if(auth()->user()->isAdmin())
+                        <p class="text-purple-100">Kelola peminjaman buku</p>
                     @else
                         <p class="text-purple-100">Lihat riwayat peminjaman Anda</p>
                     @endif
 
                 </div>
                 <div class="flex gap-3">
-                    @if(auth()->user()->isPetugas())
+                    @if(auth()->user()->isAdmin())
                     <a href="{{ route('laporan.peminjaman') }}" class="bg-white text-purple-600 hover:bg-purple-50 px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -25,7 +25,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
-                        @if(auth()->user()->isAdmin() || auth()->user()->isPetugas())
+                        @if(auth()->user()->isAdmin())
                         Tambah Peminjaman
                         @else
                         Ajukan Peminjaman
@@ -101,7 +101,7 @@
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Alat</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">buku</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tanggal Pengembalian</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
@@ -114,10 +114,10 @@
                                     {{ $item->user->name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                    {{ $item->alat->nama_alat }} ({{ $item->alat->kategori->nama_kategori }})
+                                    {{ $item->buku->nama_buku }} ({{ $item->buku->kategori->nama_kategori }})
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                    {{ $item->tanggal_pengembalian->format('d M Y') }}
+                                    {{ $item->tgl_pengembalian->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
@@ -149,7 +149,7 @@
                                             Edit
                                         </a>
                                         @endif
-                                            @if(auth()->user()->isPetugas())
+                                            @if(auth()->user()->isAdmin())
                                             @if($item->status == 'menunggu')
                                                 <form method="POST" action="{{ route('peminjaman.confirm', $item) }}" class="inline">
                                                     @csrf

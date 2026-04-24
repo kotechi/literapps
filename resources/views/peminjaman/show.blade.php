@@ -32,7 +32,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Tanggal Pengembalian</p>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $peminjaman->tanggal_pengembalian->format('d M Y') }}</p>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $peminjaman->tgl_pengembalian->format('d M Y') }}</p>
                     </div>
                 </div>
 
@@ -42,9 +42,9 @@
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $peminjaman->user->name }}</p>
                     </div>
                     <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                        <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Alat</p>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $peminjaman->alat->nama_alat }}</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $peminjaman->alat->kategori->nama_kategori }}</p>
+                        <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">buku</p>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $peminjaman->buku->nama_buku }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $peminjaman->buku->kategori->nama_kategori }}</p>
                     </div>
                     <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                         <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Dibuat</p>
@@ -76,8 +76,8 @@
                         <span class="font-semibold text-gray-900 dark:text-white">{{ $peminjaman->user->name }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 dark:text-gray-400">Alat</span>
-                        <span class="font-semibold text-gray-900 dark:text-white text-right">{{ $peminjaman->alat->nama_alat }}</span>
+                        <span class="text-gray-500 dark:text-gray-400">buku</span>
+                        <span class="font-semibold text-gray-900 dark:text-white text-right">{{ $peminjaman->buku->nama_buku }}</span>
                     </div>
                 </div>
             </div>
