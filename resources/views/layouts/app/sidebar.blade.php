@@ -80,9 +80,11 @@
                     <flux:sidebar.item class="nav-item-modern" icon="arrow-path" :href="route('pengembalian.index')" :current="request()->routeIs('pengembalian.*')" wire:navigate>
                         {{ __('Pengembalian') }}
                     </flux:sidebar.item>
+                    @if(auth()->user()->isAdmin())
                     <flux:sidebar.item class="nav-item-modern" icon="identification" :href="route('anggota.index')" :current="request()->routeIs('anggota.*')" wire:navigate>
                         {{ __('Daftar Anggota') }}
                     </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
 
                 @if(auth()->user()->isAdmin())

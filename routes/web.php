@@ -17,6 +17,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('anggota', [\App\Http\Controllers\AnggotaController::class, 'index'])->name('anggota.index');
+    Route::get('anggota/create', [\App\Http\Controllers\AnggotaController::class, 'create'])->name('anggota.create');
+    Route::post('anggota', [\App\Http\Controllers\AnggotaController::class, 'store'])->name('anggota.store');
+    Route::get('anggota/{anggota}/edit', [\App\Http\Controllers\AnggotaController::class, 'edit'])->name('anggota.edit');
+    Route::put('anggota/{anggota}', [\App\Http\Controllers\AnggotaController::class, 'update'])->name('anggota.update');
+    Route::delete('anggota/{anggota}', [\App\Http\Controllers\AnggotaController::class, 'destroy'])->name('anggota.destroy');
     
     Route::prefix('users')->group(function () {
         Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');

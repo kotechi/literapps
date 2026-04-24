@@ -13,8 +13,14 @@ class AlatController extends Controller
      */
     public function index()
     {
-        $buku = Buku::with('kategori')->paginate(15);
-        return view('buku.index', compact('buku'));
+        $status = request()->get('status');
+
+        $buku = Buku::with('kategori')
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('buku.index', compact('buku', 'status'));
     }
 
     /**
@@ -97,13 +103,21 @@ class AlatController extends Controller
     public function search(Request $request)
     {
         $query = $request->get('q');
-        $buku = Buku::with('kategori')
-            ->where('nama_buku', 'like', '%' . $query . '%')
-            ->orWhereHas('kategori', function ($q) use ($query) {
-                $q->where('nama_kategori', 'like', '%' . $query . '%');
-            })
-            ->paginate(15);
+        $status = $request->get('status');
 
-        return view('buku.index', compact('buku', 'query'));
+        $buku = Buku::with('kategori')
+            ->when($query, function ($q) use ($query) {
+                $q->where(function ($subQuery) use ($query) {
+                    $subQuery->where('nama_buku', 'like', '%' . $query . '%')
+                        ->orWhereHas('kategori', function ($kategoriQuery) use ($query) {
+                            $kategoriQuery->where('nama_kategori', 'like', '%' . $query . '%');
+                        });
+                });
+            })
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('buku.index', compact('buku', 'query', 'status'));
     }
 }

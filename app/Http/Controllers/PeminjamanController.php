@@ -14,12 +14,16 @@ class PeminjamanController extends Controller
      */
     public function index()
     {
+        $status = request()->get('status');
+
         if(auth()->user()->isSiswa()) {
         
             $peminjaman = Peminjaman::with(['user', 'buku.kategori'])
                 ->where('id_user', auth()->id())
+                ->when($status, fn ($q) => $q->where('status', $status))
                 ->orderBy('created_at', 'desc')
-                ->paginate(15);
+                ->paginate(15)
+                ->withQueryString();
             
             // Summary untuk siswa
             $totalPeminjaman = Peminjaman::where('id_user', auth()->id())->count();
@@ -28,15 +32,17 @@ class PeminjamanController extends Controller
         } else {
                         
             $peminjaman = Peminjaman::with(['user', 'buku.kategori'])
+                ->when($status, fn ($q) => $q->where('status', $status))
                 ->orderBy('created_at', 'desc')
-                ->paginate(15);
+                ->paginate(15)
+                ->withQueryString();
             
             // Summary untuk admin
             $totalPeminjaman = Peminjaman::count();
             $peminjamanDisetujui = Peminjaman::where('status', 'disetujui')->count();
             $peminjamanMenunggu = Peminjaman::where('status', 'menunggu')->count();
         }
-        return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'peminjamanDisetujui', 'peminjamanMenunggu'));
+        return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'peminjamanDisetujui', 'peminjamanMenunggu', 'status'));
     }
 
     /**

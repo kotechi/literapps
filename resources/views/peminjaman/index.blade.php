@@ -94,6 +94,28 @@
             </div>
         </div>
 
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <form method="GET" action="{{ route('peminjaman.index') }}" class="flex gap-3 flex-wrap">
+                <div>
+                    <select name="status" class="w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                        <option value="">Semua Status</option>
+                        <option value="menunggu" @selected(($status ?? '') === 'menunggu')>Menunggu</option>
+                        <option value="disetujui" @selected(($status ?? '') === 'disetujui')>Disetujui</option>
+                        <option value="ditolak" @selected(($status ?? '') === 'ditolak')>Ditolak</option>
+                        <option value="dikembalikan" @selected(($status ?? '') === 'dikembalikan')>Dikembalikan</option>
+                    </select>
+                </div>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg">
+                    Filter
+                </button>
+                @if(!empty($status ?? null))
+                    <a href="{{ route('peminjaman.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg">
+                        Reset
+                    </a>
+                @endif
+            </form>
+        </div>
+
         <!-- Data Table -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
             <div class="overflow-x-auto">
